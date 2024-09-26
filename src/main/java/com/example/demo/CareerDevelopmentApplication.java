@@ -32,17 +32,17 @@ public class CareerDevelopmentApplication implements CommandLineRunner {
 		UUID userUuid = UUID.randomUUID();
 		UsersDTO usersDTO = new UsersDTO("Karim", "Ahmed", "kimo.abozeed@gmail.com", "123","01021343238", null, null);
 
-//		usersServices.addUser(usersDTO);
+		usersServices.addUser(usersDTO);
 
-		UsersDTO usersDTO2 = new UsersDTO();
-		usersDTO2.setFirstName("Omar");
+//		UsersDTO usersDTO2 = new UsersDTO();
+//		usersDTO2.setFirstName("Omar");
 
-		usersServices.updateUsers(UUID.fromString("6e4fe5f2-4c72-493e-b6da-1b2ed582dce2"), usersDTO2);
+//		usersServices.updateUsers(UUID.fromString("6e4fe5f2-4c72-493e-b6da-1b2ed582dce2"), usersDTO2);
 
-		UsersDTO returnedDto = usersServices.getUser(UUID.fromString("6e4fe5f2-4c72-493e-b6da-1b2ed582dce2"));
-		System.out.println(returnedDto.toString());
-
-		usersServices.deleteUser(UUID.fromString("b05cf9d0-37d2-411e-a1e6-9421e42c1829"));
+//		UsersDTO returnedDto = usersServices.getUser(UUID.fromString("6e4fe5f2-4c72-493e-b6da-1b2ed582dce2"));
+//		System.out.println(returnedDto.toString());
+//
+//		usersServices.deleteUser(UUID.fromString("b05cf9d0-37d2-411e-a1e6-9421e42c1829"));
 
 
 
