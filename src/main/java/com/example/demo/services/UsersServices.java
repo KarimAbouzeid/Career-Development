@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.exceptions.UserAlreadyExistsException;
 import com.example.demo.dtos.UsersDTO;
 import com.example.demo.entities.Titles;
 import com.example.demo.entities.Users;
@@ -35,6 +36,10 @@ public class UsersServices {
     }
 
     public UsersDTO addUser(UsersDTO usersDTO) {
+        if (usersRepository.existsByEmail(usersDTO.getEmail())) {
+            throw new UserAlreadyExistsException("User with email " + usersDTO.getEmail() + " already exists.");
+        }
+
         Map<String, Object> managerAndTitle = getManagerAndTitle(usersDTO);
         Users manager = (Users) managerAndTitle.get("manager");
         Titles title = (Titles) managerAndTitle.get("title");

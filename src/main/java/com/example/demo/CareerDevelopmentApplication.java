@@ -43,6 +43,7 @@ public class CareerDevelopmentApplication implements CommandLineRunner {
 //		UUID userUuid = UUID.randomUUID();
 //		UsersDTO usersDTO = new UsersDTO("Karim", "Ahmed", "kimo.abozeed@gmail.com", "123","01021343238", null, null);
 
+
 //		usersServices.addUser(usersDTO);
 //
 //		UsersDTO usersDTO2 = new UsersDTO();
@@ -50,10 +51,12 @@ public class CareerDevelopmentApplication implements CommandLineRunner {
 //
 //		usersServices.updateUsers(UUID.fromString("6e4fe5f2-4c72-493e-b6da-1b2ed582dce2"), usersDTO2);
 //
+
 //		UsersDTO returnedDto = usersServices.getUser(UUID.fromString("6e4fe5f2-4c72-493e-b6da-1b2ed582dce2"));
 //		System.out.println(returnedDto.toString());
 //
 //		usersServices.deleteUser(UUID.fromString("b05cf9d0-37d2-411e-a1e6-9421e42c1829"));
+
 
 		DepartmentsDTO departmentsDTO= new DepartmentsDTO("Software Engineering");
 		DepartmentsDTO departmentsDTO2 = new DepartmentsDTO("Quality Assurance");
@@ -71,5 +74,6 @@ public class CareerDevelopmentApplication implements CommandLineRunner {
 //		titlesDTO.setTitle(null);
 //		titlesServices.updateTitles(UUID.fromString("9e4c9f85-e85e-4d51-80ed-2a9669dd11a9"), titlesDTO);
 //		System.out.println(titlesServices.getTitles(UUID.fromString("9e4c9f85-e85e-4d51-80ed-2a9669dd11a9")));
+
 	}
 }
