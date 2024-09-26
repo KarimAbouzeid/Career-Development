@@ -9,6 +9,8 @@ import com.example.demo.repositories.TitlesRepository;
 import com.example.demo.repositories.UsersRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -33,6 +35,18 @@ public class UsersServices {
 
         return usersMapper.toUsersDTO(user);
     }
+
+    public UsersDTO login(String email, String password) {
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found"));
+
+        if (!user.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+
+        return usersMapper.toUsersDTO(user);
+    }
+
 
     public UsersDTO addUser(UsersDTO usersDTO) {
         if (usersRepository.existsByEmail(usersDTO.getEmail())) {
@@ -77,6 +91,17 @@ public class UsersServices {
     }
 
 
+    public Page<UsersDTO> getAllUsers(Pageable pageable) {
+        Page<Users> usersPage = usersRepository.findAll(pageable);
+
+        if (usersPage.isEmpty()) {
+            throw new EntityNotFoundException("No users found");
+        }
+
+        return usersPage.map(usersMapper::toUsersDTO);
+
+    }
+
     public Map<String, Object> getManagerAndTitle(UsersDTO usersDTO) {
         Map<String, Object> result = new HashMap<>();
 
@@ -96,6 +121,8 @@ public class UsersServices {
 
         return result;
     }
+
+
 
 
 }
