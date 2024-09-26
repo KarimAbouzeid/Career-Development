@@ -14,10 +14,11 @@ import java.util.*;
 
 @Service
 public class UsersServices {
-    private final UsersRepository usersRepository;
 
-    private final UsersMapper usersMapper;
+    private final UsersRepository usersRepository;
     private final TitlesRepository titlesRepository;
+    private final UsersMapper usersMapper;
+
 
     @Autowired
     public UsersServices(UsersRepository usersRepository, UsersMapper usersMapper, TitlesRepository titlesRepository) {
@@ -55,8 +56,12 @@ public class UsersServices {
         Users user = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
 
-        user.setManager(manager);
-        user.setTitleId(title);
+        if(manager != null)
+            user.setManager(manager);
+
+        if(title != null)
+            user.setTitleId(title);
+
         usersMapper.updateUsersFromDto(usersUpdateDTO,user);
 
         usersRepository.save(user);
