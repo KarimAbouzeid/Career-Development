@@ -7,10 +7,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel ="spring")
 public interface DepartmentsMapper {
-    DepartmentsDTO toDepartments(Departments departments);
+    DepartmentsDTO toDepartmentsDTO(Departments departments);
 
     @Mapping(target = "id", ignore = true)
-    Departments toDepartmentsDTO(DepartmentsDTO departmentsDTO);
+    Departments toDepartments(DepartmentsDTO departmentsDTO);
 }
 
 

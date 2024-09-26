@@ -8,10 +8,10 @@ import org.mapstruct.Mapping;
 
 
 public interface TitlesMapper {
-    TitlesDTO toTitles(Titles titles);
+    TitlesDTO toTitlesDTO(Titles titles);
 
     @Mapping(target = "id", ignore = true)
-    Titles toTitlesDTO(TitlesDTO titlesDTO);
+    Titles toTitle(TitlesDTO titlesDTO);
 }
 
 
