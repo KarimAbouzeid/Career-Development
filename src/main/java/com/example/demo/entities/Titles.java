@@ -24,7 +24,7 @@ public class Titles {
     private Set<Users> users;
 
     @ManyToOne
-    @JoinColumn(name="department_id", nullable = false)
+    @JoinColumn(name="department_id", nullable = true)
     private Departments departmentId;
 
 
