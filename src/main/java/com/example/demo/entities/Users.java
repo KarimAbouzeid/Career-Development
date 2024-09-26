@@ -26,12 +26,12 @@ public class Users {
     private String phone;
 
     @ManyToOne
-    @JoinColumn(name = "manager_id")
+    @JoinColumn(name = "manager_id", nullable = true)
     private Users manager;
 
 
     @ManyToOne
-    @JoinColumn(name="title_id", nullable = false)
+    @JoinColumn(name="title_id", nullable = true)
     private Titles titleId;
 }
 

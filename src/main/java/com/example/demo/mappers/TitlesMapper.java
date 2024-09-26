@@ -8,9 +8,13 @@ import org.mapstruct.Mapping;
 
 
 public interface TitlesMapper {
+
+
+    @Mapping(target = "departmentId", ignore = true)
     TitlesDTO toTitlesDTO(Titles titles);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "departmentId", ignore = true)
     Titles toTitle(TitlesDTO titlesDTO);
 }
 
