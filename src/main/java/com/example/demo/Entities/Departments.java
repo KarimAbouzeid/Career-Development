@@ -1,29 +1,27 @@
-package com.example.demo.Entities;
+package com.example.demo.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.Set;
 import java.util.UUID;
 
-@Setter
-@Getter
+@Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="Departments")
 public class Departments {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String name;
 
-    public Departments() {
-    }
+    @OneToMany(mappedBy = "departmentId")
+    private Set<Titles> titles;
 
-    public Departments(UUID id,String name) {
-        this.id=id;
-        this.name = name;
-    }
 
 
 }

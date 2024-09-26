@@ -1,14 +1,15 @@
-package com.example.demo.Entities;
+package com.example.demo.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.Set;
 import java.util.UUID;
 
-@Setter
-@Getter
+@Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="Titles")
 public class Titles {
     @Id
@@ -19,14 +20,12 @@ public class Titles {
 
     private Boolean isManager;
 
-    public Titles() {
-    }
+    @OneToMany(mappedBy = "titleId")
+    private Set<Users> users;
 
-    public Titles(UUID id,String title, Boolean isManager) {
-        this.id = id;
-        this.title = title;
-        this.isManager = isManager;
-    }
+    @ManyToOne
+    @JoinColumn(name="department_id", nullable = false)
+    private Departments departmentId;
 
 
 }
