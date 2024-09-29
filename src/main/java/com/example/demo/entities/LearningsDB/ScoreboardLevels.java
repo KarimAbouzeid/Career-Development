@@ -1,4 +1,4 @@
-package com.example.demo.entities.learningsDB;
+package com.example.demo.entities.LearningsDB;
 
 
 import jakarta.persistence.*;

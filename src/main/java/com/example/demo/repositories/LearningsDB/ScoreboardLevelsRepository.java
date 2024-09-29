@@ -1,6 +1,6 @@
 package com.example.demo.repositories.LearningsDB;
 
-import com.example.demo.entities.learningsDB.ScoreboardLevels;
+import com.example.demo.entities.LearningsDB.ScoreboardLevels;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

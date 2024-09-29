@@ -62,7 +62,7 @@ public class UserManagementJpaConfig {
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://localhost:5432/UserManagement");
         dataSource.setUsername("postgres");
-        dataSource.setPassword("0000");
+        dataSource.setPassword("230602");
 
         return dataSource;
     }
