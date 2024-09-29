@@ -1,4 +1,4 @@
-package com.example.demo.configurations.jpa;
+package com.example.demo.configurations;
 
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -33,7 +33,6 @@ public class LearningsJpaConfig {
         em.setDataSource(learningsDataSource());
         em.setPackagesToScan(
                 new String[] { "com.example.demo.entities.LearningsDB" });
-
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         HashMap<String, Object> properties = new HashMap<>();
