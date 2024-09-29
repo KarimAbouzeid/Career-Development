@@ -46,6 +46,30 @@ public class DepartmentsServicesTests {
 
 
     @Test
+    public void DepartmentsService_GetDepartment_ReturnsDepartmentsDTO() {
+        UUID uuid = UUID.randomUUID();
+
+        when(departmentsRepository.findById(uuid)).thenReturn(Optional.of(departments1));
+        when(departmentsMapper.toDepartmentsDTO(departments1)).thenReturn(departmentsDTO1);
+
+        DepartmentsDTO returnedDepartmentsDTO = departmentsServices.getDepartment(uuid);
+
+        verify(departmentsRepository, times(1)).findById(uuid);
+        Assertions.assertEquals(returnedDepartmentsDTO, departmentsDTO1);
+    }
+
+    @Test
+    public void DepartmentsService_GetDepartment_ThrowsEntityNotFoundException() {
+        UUID uuid = UUID.randomUUID();
+
+        when(departmentsRepository.findById(uuid)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> departmentsServices.getDepartment(uuid));
+
+        verify(departmentsRepository, times(1)).findById(uuid);
+    }
+
+    @Test
     public void DepartmentsService_AddDepartments_ReturnsDepartmentsDTO() {
 
         when(departmentsMapper.toDepartments(any(DepartmentsDTO.class))).thenReturn(departments1);
@@ -63,8 +87,6 @@ public class DepartmentsServicesTests {
         UUID uuid = UUID.randomUUID();
 
         when(departmentsRepository.findById(any(UUID.class))).thenReturn(Optional.of(departments1));
-
-
 
         when(departmentsMapper.toDepartmentsDTO(any(Departments.class))).thenReturn(departmentsDTO1);
         DepartmentsDTO returnedDepartmentsDTO = departmentsServices.updateDepartment(uuid, departmentsDTO1);
@@ -85,11 +107,33 @@ public class DepartmentsServicesTests {
 
         when(departmentsRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-
         Assertions.assertThrows(EntityNotFoundException.class, ()-> departmentsServices.updateDepartment(uuid, departmentsDTO1));
 
     }
 
+
+    @Test
+    public void DepartmentsService_DeleteDepartment_Success() {
+        UUID uuid = UUID.randomUUID();
+
+        when(departmentsRepository.existsById(uuid)).thenReturn(true);
+
+        departmentsServices.deleteDepartment(uuid);
+
+        verify(departmentsRepository, times(1)).deleteById(uuid);
+    }
+
+    @Test
+    public void DepartmentsService_DeleteDepartment_ThrowsEntityNotFoundException() {
+        UUID uuid = UUID.randomUUID();
+
+        when(departmentsRepository.existsById(uuid)).thenReturn(false);
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> departmentsServices.deleteDepartment(uuid));
+
+        verify(departmentsRepository, times(1)).existsById(uuid);
+        verify(departmentsRepository, never()).deleteById(uuid);
+    }
 
 
 }
