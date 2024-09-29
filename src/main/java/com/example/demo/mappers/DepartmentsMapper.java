@@ -1,9 +1,7 @@
 package com.example.demo.mappers;
 
 import com.example.demo.dtos.DepartmentsDTO;
-import com.example.demo.dtos.TitlesDTO;
-import com.example.demo.entities.Departments;
-import com.example.demo.entities.Titles;
+import com.example.demo.entities.UsersDB.Departments;
 import org.mapstruct.*;
 
 @Mapper(componentModel ="spring")

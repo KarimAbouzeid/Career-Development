@@ -1,9 +1,9 @@
 package com.example.demo.services;
 
 import com.example.demo.dtos.DepartmentsDTO;
-import com.example.demo.entities.Departments;
+import com.example.demo.entities.UsersDB.Departments;
 import com.example.demo.mappers.DepartmentsMapper;
-import com.example.demo.repositories.DepartmentsRepository;
+import com.example.demo.repositories.UsersDB.DepartmentsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 import java.util.UUID;

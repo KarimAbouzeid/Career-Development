@@ -1,9 +1,9 @@
 package com.example.demo.services;
 
 import com.example.demo.dtos.DepartmentsDTO;
-import com.example.demo.entities.Departments;
+import com.example.demo.entities.UsersDB.Departments;
 import com.example.demo.mappers.DepartmentsMapper;
-import com.example.demo.repositories.DepartmentsRepository;
+import com.example.demo.repositories.UsersDB.DepartmentsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
