@@ -1,7 +1,7 @@
-package com.example.demo.controllers;
+package com.example.demo.controllers.usersDB;
 
-import com.example.demo.dtos.DepartmentsDTO;
-import com.example.demo.services.DepartmentsServices;
+import com.example.demo.dtos.usersDB.DepartmentsDTO;
+import com.example.demo.services.UsersDB.DepartmentsServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

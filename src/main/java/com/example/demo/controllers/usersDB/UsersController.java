@@ -1,7 +1,7 @@
-package com.example.demo.controllers;
+package com.example.demo.controllers.usersDB;
 
-import com.example.demo.dtos.UsersDTO;
-import com.example.demo.services.UsersServices;
+import com.example.demo.dtos.usersDB.UsersDTO;
+import com.example.demo.services.UsersDB.UsersServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

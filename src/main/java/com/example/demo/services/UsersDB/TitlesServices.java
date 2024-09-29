@@ -1,9 +1,9 @@
-package com.example.demo.services;
+package com.example.demo.services.UsersDB;
 
-import com.example.demo.dtos.TitlesDTO;
+import com.example.demo.dtos.usersDB.TitlesDTO;
 import com.example.demo.entities.UsersDB.Departments;
 import com.example.demo.entities.UsersDB.Titles;
-import com.example.demo.mappers.TitlesMapper;
+import com.example.demo.mappers.usersDB.TitlesMapper;
 import com.example.demo.repositories.UsersDB.DepartmentsRepository;
 import com.example.demo.repositories.UsersDB.TitlesRepository;
 import jakarta.persistence.EntityNotFoundException;

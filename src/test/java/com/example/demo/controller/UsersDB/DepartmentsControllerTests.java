@@ -1,23 +1,18 @@
-package com.example.demo.controller;
+package com.example.demo.controller.UsersDB;
 
 import com.example.demo.GlobalExceptionHandler;
-import com.example.demo.controllers.DepartmentsController;
-import com.example.demo.dtos.DepartmentsDTO;
-import com.example.demo.services.DepartmentsServices;
+import com.example.demo.controllers.usersDB.DepartmentsController;
+import com.example.demo.dtos.usersDB.DepartmentsDTO;
+import com.example.demo.services.UsersDB.DepartmentsServices;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.UUID;
 

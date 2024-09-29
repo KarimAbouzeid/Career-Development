@@ -1,6 +1,6 @@
-package com.example.demo.mappers;
+package com.example.demo.mappers.usersDB;
 
-import com.example.demo.dtos.TitlesDTO;
+import com.example.demo.dtos.usersDB.TitlesDTO;
 import com.example.demo.entities.UsersDB.Titles;
 import org.mapstruct.*;
 

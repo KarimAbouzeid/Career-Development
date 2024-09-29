@@ -1,4 +1,4 @@
-package com.example.demo.entities.LearningsDB;
+package com.example.demo.entities.learningsDB;
 
 
 import com.example.demo.entities.UsersDB.Users;
@@ -17,7 +17,6 @@ import java.util.UUID;
 public class UserScores {
     @Id
     private UUID userId;
-
 
 
     private int score;

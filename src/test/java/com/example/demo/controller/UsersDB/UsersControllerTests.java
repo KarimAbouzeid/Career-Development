@@ -1,10 +1,10 @@
-package com.example.demo.controller;
+package com.example.demo.controller.UsersDB;
 
 import com.example.demo.GlobalExceptionHandler;
-import com.example.demo.controllers.UsersController;
-import com.example.demo.dtos.UsersDTO;
+import com.example.demo.controllers.usersDB.UsersController;
+import com.example.demo.dtos.usersDB.UsersDTO;
 import com.example.demo.exceptions.InvalidCredentialsException;
-import com.example.demo.services.UsersServices;
+import com.example.demo.services.UsersDB.UsersServices;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

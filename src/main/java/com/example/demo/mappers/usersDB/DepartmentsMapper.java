@@ -1,6 +1,6 @@
-package com.example.demo.mappers;
+package com.example.demo.mappers.usersDB;
 
-import com.example.demo.dtos.DepartmentsDTO;
+import com.example.demo.dtos.usersDB.DepartmentsDTO;
 
 import com.example.demo.entities.UsersDB.Departments;
 

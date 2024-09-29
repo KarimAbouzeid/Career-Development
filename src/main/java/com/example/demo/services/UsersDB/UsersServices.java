@@ -1,11 +1,11 @@
-package com.example.demo.services;
+package com.example.demo.services.UsersDB;
 
 import com.example.demo.exceptions.InvalidCredentialsException;
 import com.example.demo.exceptions.UserAlreadyExistsException;
-import com.example.demo.dtos.UsersDTO;
+import com.example.demo.dtos.usersDB.UsersDTO;
 import com.example.demo.entities.UsersDB.Titles;
 import com.example.demo.entities.UsersDB.Users;
-import com.example.demo.mappers.UsersMapper;
+import com.example.demo.mappers.usersDB.UsersMapper;
 import com.example.demo.repositories.UsersDB.TitlesRepository;
 import com.example.demo.repositories.UsersDB.UsersRepository;
 import jakarta.persistence.EntityNotFoundException;

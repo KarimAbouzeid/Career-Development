@@ -1,7 +1,8 @@
-package com.example.demo.mappers;
+package com.example.demo.mappers.UsersDB;
 
-import com.example.demo.dtos.DepartmentsDTO;
-import com.example.demo.entities.Departments;
+import com.example.demo.dtos.usersDB.DepartmentsDTO;
+import com.example.demo.entities.UsersDB.Departments;
+import com.example.demo.mappers.usersDB.DepartmentsMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

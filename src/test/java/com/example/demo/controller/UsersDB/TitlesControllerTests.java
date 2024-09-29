@@ -1,9 +1,9 @@
-package com.example.demo.controller;
+package com.example.demo.controller.UsersDB;
 
 import com.example.demo.GlobalExceptionHandler;
-import com.example.demo.controllers.TitlesController;
-import com.example.demo.dtos.TitlesDTO;
-import com.example.demo.services.TitlesServices;
+import com.example.demo.controllers.usersDB.TitlesController;
+import com.example.demo.dtos.usersDB.TitlesDTO;
+import com.example.demo.services.UsersDB.TitlesServices;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

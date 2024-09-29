@@ -1,8 +1,8 @@
-package com.example.demo.services;
+package com.example.demo.services.UsersDB;
 
-import com.example.demo.dtos.DepartmentsDTO;
+import com.example.demo.dtos.usersDB.DepartmentsDTO;
 import com.example.demo.entities.UsersDB.Departments;
-import com.example.demo.mappers.DepartmentsMapper;
+import com.example.demo.mappers.usersDB.DepartmentsMapper;
 import com.example.demo.repositories.UsersDB.DepartmentsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
