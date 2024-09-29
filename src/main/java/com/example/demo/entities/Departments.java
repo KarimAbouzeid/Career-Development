@@ -22,6 +22,9 @@ public class Departments {
     @OneToMany(mappedBy = "departmentId")
     private Set<Titles> titles;
 
+    public Departments(String name) {
+        this.name = name;
+    }
 
 
 }
