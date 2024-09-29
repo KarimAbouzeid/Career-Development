@@ -7,14 +7,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 @SpringBootApplication
-public class CareerDevelopmentApplication{
 
+public class CareerDevelopmentApplication{
 
 	public static void main(String[] args) {
 
 		SpringApplication.run(CareerDevelopmentApplication.class, args);
 	}
 
-
-
 }
+

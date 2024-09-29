@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.exceptions.InvalidCredentialsException;
 import com.example.demo.exceptions.UserAlreadyExistsException;
 import com.example.demo.dtos.UsersDTO;
 import com.example.demo.entities.UsersDB.Titles;
@@ -42,7 +43,7 @@ public class UsersServices {
                 .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found"));
 
         if (!user.getPassword().equals(password)) {
-            throw new IllegalArgumentException("Invalid password");
+            throw new InvalidCredentialsException("Invalid password");
         }
 
         return usersMapper.toUsersDTO(user);
