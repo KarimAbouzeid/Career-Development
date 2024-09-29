@@ -1,11 +1,11 @@
 package com.example.demo.services;
 
 import com.example.demo.dtos.TitlesDTO;
-import com.example.demo.entities.Departments;
-import com.example.demo.entities.Titles;
+import com.example.demo.entities.UsersDB.Departments;
+import com.example.demo.entities.UsersDB.Titles;
 import com.example.demo.mappers.TitlesMapper;
-import com.example.demo.repositories.DepartmentsRepository;
-import com.example.demo.repositories.TitlesRepository;
+import com.example.demo.repositories.UsersDB.DepartmentsRepository;
+import com.example.demo.repositories.UsersDB.TitlesRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.example.demo.mappers;
 
 import com.example.demo.dtos.TitlesDTO;
-import com.example.demo.entities.Titles;
+import com.example.demo.entities.UsersDB.Titles;
 import org.mapstruct.*;
 
 

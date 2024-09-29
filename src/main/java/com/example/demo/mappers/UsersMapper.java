@@ -1,11 +1,8 @@
 package com.example.demo.mappers;
 
 import com.example.demo.dtos.UsersDTO;
-import com.example.demo.entities.Titles;
-import com.example.demo.entities.Users;
+import com.example.demo.entities.UsersDB.Users;
 import org.mapstruct.*;
-
-import java.util.UUID;
 
 @Mapper(componentModel ="spring")
 public interface UsersMapper {
