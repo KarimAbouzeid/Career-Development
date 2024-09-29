@@ -1,7 +1,5 @@
-package com.example.demo.entities.learningsDB;
+package com.example.demo.entities.LearningsDB;
 
-
-import com.example.demo.entities.UsersDB.Users;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +15,6 @@ import java.util.UUID;
 public class UserScores {
     @Id
     private UUID userId;
-
 
     private int score;
 }
