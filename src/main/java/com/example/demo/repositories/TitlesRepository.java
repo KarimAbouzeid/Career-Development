@@ -1,6 +1,6 @@
 package com.example.demo.repositories;
 
-import com.example.demo.entities.Titles;
+import com.example.demo.entities.UsersDB.Titles;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

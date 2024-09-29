@@ -2,8 +2,8 @@ package com.example.demo.services;
 
 import com.example.demo.exceptions.UserAlreadyExistsException;
 import com.example.demo.dtos.UsersDTO;
-import com.example.demo.entities.Titles;
-import com.example.demo.entities.Users;
+import com.example.demo.entities.UsersDB.Titles;
+import com.example.demo.entities.UsersDB.Users;
 import com.example.demo.mappers.UsersMapper;
 import com.example.demo.repositories.TitlesRepository;
 import com.example.demo.repositories.UsersRepository;

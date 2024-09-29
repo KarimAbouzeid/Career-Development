@@ -1,7 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.dtos.DepartmentsDTO;
-import com.example.demo.entities.Departments;
+import com.example.demo.entities.UsersDB.Departments;
 import com.example.demo.mappers.DepartmentsMapper;
 import com.example.demo.repositories.DepartmentsRepository;
 import jakarta.persistence.EntityNotFoundException;
