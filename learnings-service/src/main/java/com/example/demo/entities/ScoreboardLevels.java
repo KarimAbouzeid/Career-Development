@@ -1,11 +1,4 @@
-<<<<<<<< HEAD:learnings-service/src/main/java/com/example/demo/entities/ScoreboardLevels.java
 package com.example.demo.entities;
-|||||||| 3f1c1b9:src/main/java/com/example/demo/entities/learningsDB/ScoreboardLevels.java
-package com.example.demo.entities.learningsDB;
-========
-package com.example.demo.entities.LearningsDB;
->>>>>>>> 7c2b0816f1f225a9e4e08facd5aa044b469ea4b8:src/main/java/com/example/demo/entities/LearningsDB/ScoreboardLevels.java
-
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

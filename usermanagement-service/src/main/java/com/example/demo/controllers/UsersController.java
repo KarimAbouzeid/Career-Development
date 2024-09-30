@@ -29,13 +29,13 @@ public class UsersController {
         return ResponseEntity.ok(userDTO);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<UsersDTO> updateUser(@PathVariable UUID id, @RequestBody UsersDTO usersUpdateDTO) {
         UsersDTO updatedUser = usersServices.updateUsers(id, usersUpdateDTO);
         return ResponseEntity.ok(updatedUser);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable UUID id) {
         usersServices.deleteUser(id);
         return ResponseEntity.ok("User deleted successfully");
@@ -58,6 +58,12 @@ public class UsersController {
 
     @PostMapping("/signUp")
     public ResponseEntity<UsersDTO> signUp(@RequestBody UsersDTO usersDTO) {
+        UsersDTO createdUser = usersServices.addUser(usersDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<UsersDTO> addUser(@RequestBody UsersDTO usersDTO) {
         UsersDTO createdUser = usersServices.addUser(usersDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
