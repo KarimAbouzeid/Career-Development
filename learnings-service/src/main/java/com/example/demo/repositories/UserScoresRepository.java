@@ -1,0 +1,9 @@
+package com.example.demo.repositories;
+
+import com.example.demo.entities.UserScores;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface UserScoresRepository extends JpaRepository<UserScores, UUID> {
+}
