@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,7 +33,6 @@ public class ScoreboardLevelsService {
 
         return scoreboardLevelsMapper.toScoreboardLevelsDTO(scoreboardLevels);
     }
-
 
 
     public ScoreboardLevelsDTO addScoreboardLevel(ScoreboardLevelsDTO scoreboardLevelsDTO) {
@@ -79,6 +79,15 @@ public class ScoreboardLevelsService {
     }
 
 
+    public String getLevelByScore(int score) {
+        List<ScoreboardLevels> levels = scoreboardLevelsRepository.findAll();
 
+        for (ScoreboardLevels level : levels) {
+            if (score < level.getMinScore()) {
+                return level.getLevelName();
+            }
+        }
+        return "Unknown Level"; // Fallback in case no level matches
+    }
 
 }

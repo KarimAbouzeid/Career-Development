@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/scoreboardLevels")
 public class ScoreboardLevelsController {
@@ -47,5 +48,10 @@ public class ScoreboardLevelsController {
         scoreboardLevelsService.deletescoreboardLevel(id);
         return ResponseEntity.ok("ScoreboardLevel deleted successfully");
 
+    }
+
+    @GetMapping("/level")
+    public String getLevelByScore(@RequestParam int score) {
+        return scoreboardLevelsService.getLevelByScore(score);
     }
 }
