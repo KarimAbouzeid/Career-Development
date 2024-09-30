@@ -60,7 +60,7 @@ public class ScoreboardLevelsServicesTests {
     }
 
     @Test
-    public void DepartmentsService_GetDepartment_ThrowsEntityNotFoundException() {
+    public void ScoreboardLevelsService_GetDepartment_ThrowsEntityNotFoundException() {
         UUID uuid = UUID.randomUUID();
 
         when(scoreboardLevelsRepository.findById(uuid)).thenReturn(Optional.empty());
@@ -71,7 +71,7 @@ public class ScoreboardLevelsServicesTests {
     }
 
     @Test
-    public void DepartmentsService_AddDepartments_ReturnsDepartmentsDTO() {
+    public void ScoreboardLevelsService_AddScoreboardLevels_ReturnsScoreboardLevelsDTO() {
 
         when(scoreboardLevelsMapper.toScoreboardLevels(any(ScoreboardLevelsDTO.class))).thenReturn(scoreboardLevels1);
         when(scoreboardLevelsMapper.toScoreboardLevelsDTO(any(ScoreboardLevels.class))).thenReturn(scoreboardLevelsDTO1);
@@ -83,7 +83,7 @@ public class ScoreboardLevelsServicesTests {
     }
 
     @Test
-    public void DepartmentsService_UpdateDepartments_ReturnsDepartmentsDTO() {
+    public void ScoreboardLevelsService_UpdateScoreboardLevels_ReturnsScoreboardLevelsDTO() {
 
         UUID uuid = UUID.randomUUID();
 
@@ -102,7 +102,7 @@ public class ScoreboardLevelsServicesTests {
     }
 
     @Test
-    public void DepartmentsService_UpdateDepartments_ReturnsEntityNotFoundException() {
+    public void ScoreboardLevelsService_UpdateScoreboardLevels_ReturnsEntityNotFoundException() {
 
         UUID uuid = UUID.randomUUID();
 
@@ -114,7 +114,7 @@ public class ScoreboardLevelsServicesTests {
 
 
     @Test
-    public void DepartmentsService_DeleteDepartment_Success() {
+    public void ScoreboardLevelsService_DeleteDepartment_Success() {
         UUID uuid = UUID.randomUUID();
 
         when(scoreboardLevelsRepository.existsById(uuid)).thenReturn(true);
@@ -125,7 +125,7 @@ public class ScoreboardLevelsServicesTests {
     }
 
     @Test
-    public void DepartmentsService_DeleteDepartment_ThrowsEntityNotFoundException() {
+    public void ScoreboardLevelsService_DeleteDepartment_ThrowsEntityNotFoundException() {
         UUID uuid = UUID.randomUUID();
 
         when(scoreboardLevelsRepository.existsById(uuid)).thenReturn(false);
