@@ -8,8 +8,10 @@ import org.mapstruct.*;
 @Mapper(componentModel ="spring")
 public interface UserScoresMapper {
 
+    @Mapping(source = "userId", target = "userId")
     UserScoresDTO toUserScoresDTO(UserScores userScores);
 
+    @Mapping(source = "userId", target = "userId")
     UserScores toUserScores(UserScoresDTO userScoresDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

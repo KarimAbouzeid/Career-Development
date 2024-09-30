@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 
 import com.example.demo.dtos.UsersDTO;
+import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.entities.Titles;
 import com.example.demo.entities.Users;
 import com.example.demo.mappers.UsersMapper;
@@ -48,6 +49,17 @@ public class UsersServices {
         }
 
         return usersMapper.toUsersDTO(user);
+    }
+
+    public UsersSignUpDTO signUp(UsersSignUpDTO usersDTO) {
+        if (usersRepository.existsByEmail(usersDTO.getEmail())) {
+            throw new UserAlreadyExistsException("User with email " + usersDTO.getEmail() + " already exists.");
+        }
+
+        Users user = usersMapper.toUsers(usersDTO);
+
+        usersRepository.save(user);
+        return usersMapper.toUsersSignupDTO(user);
     }
 
 

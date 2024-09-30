@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.repositories.UsersRepository;
 import com.example.demo.repositories.TitlesRepository;
 import com.example.demo.mappers.UsersMapper;
@@ -41,11 +42,16 @@ public class UsersServicesTests {
     private UsersServices usersServices;
 
     private UsersDTO usersDTO;
+    private UsersSignUpDTO usersSignUpDTO;
     private Users user;
     private Titles title;
 
     @BeforeEach
     public void setUp() {
+        usersSignUpDTO = new UsersSignUpDTO();
+        usersSignUpDTO.setEmail("test@test.com");
+        usersSignUpDTO.setPassword("password");
+
         usersDTO = new UsersDTO();
         usersDTO.setEmail("test@test.com");
         usersDTO.setPassword("password");
@@ -151,6 +157,27 @@ public class UsersServicesTests {
 
         assertThrows(IllegalArgumentException.class, () -> usersServices.login(usersDTO.getEmail(), "wrongPassword"));
     }
+
+    @Test
+    public void testSignUp_Success() {
+        when(usersRepository.existsByEmail(usersSignUpDTO.getEmail())).thenReturn(false);
+        when(usersMapper.toUsers(any(UsersSignUpDTO.class))).thenReturn(user);
+        when(usersMapper.toUsersSignupDTO(any(Users.class))).thenReturn(usersSignUpDTO);
+
+        UsersSignUpDTO addedUser = usersServices.signUp(usersSignUpDTO);
+
+        assertNotNull(addedUser);
+        assertEquals(usersSignUpDTO.getEmail(), addedUser.getEmail());
+        verify(usersRepository, times(1)).save(any(Users.class));
+    }
+
+    @Test
+    public void testSignUp_UserAlreadyExists_ThrowsException() {
+        when(usersRepository.existsByEmail(usersSignUpDTO.getEmail())).thenReturn(true);
+
+        assertThrows(UserAlreadyExistsException.class, () -> usersServices.signUp(usersSignUpDTO));
+    }
+
 
     @Test
     public void testDeleteUser_Success() {
