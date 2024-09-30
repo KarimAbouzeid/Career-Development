@@ -11,6 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>CareerDevelopment</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
@@ -20,6 +21,12 @@
 	<developers>
 		<developer/>
 	</developers>
+	<modules>
+		<module>usermanagement-service</module>
+		<module>shared</module>
+        <module>learnings-service</module>
+        <module>learnings-service1</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
