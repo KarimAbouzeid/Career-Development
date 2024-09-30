@@ -8,6 +8,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class UsersDTO {
+    private UUID id;
 
     private String firstName;
     private String lastName;
