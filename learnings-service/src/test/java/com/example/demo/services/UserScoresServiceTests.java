@@ -1,3 +1,5 @@
+package com.example.demo.services;
+
 import com.example.demo.dtos.UserScoresDTO;
 import com.example.demo.entities.UserScores;
 import com.example.demo.mappers.UserScoresMapper;
@@ -48,6 +50,7 @@ public class UserScoresServiceTests {
 
         userScoresDTO = new UserScoresDTO();
         userScoresDTO.setScore(100);
+        userScoresDTO.setUserId(userScoreId);
     }
 
     @Test
@@ -92,7 +95,7 @@ public class UserScoresServiceTests {
         when(userScoresRepository.save(userScores)).thenReturn(userScores);
         when(userScoresMapper.toUserScoresDTO(userScores)).thenReturn(userScoresDTO);
 
-        UserScoresDTO result = userScoresService.updateUserScore(userScoreId, userScoresDTO);
+        UserScoresDTO result = userScoresService.updateUserScore(userScoresDTO);
 
         assertNotNull(result);
         assertEquals(100, result.getScore());
@@ -104,7 +107,7 @@ public class UserScoresServiceTests {
     public void updateUserScore_userNotExists_ThrowsEntityNotFoundException() {
         when(userScoresRepository.findById(userScoreId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> userScoresService.updateUserScore(userScoreId, userScoresDTO));
+        assertThrows(EntityNotFoundException.class, () -> userScoresService.updateUserScore( userScoresDTO));
 
         verify(userScoresRepository, times(1)).findById(userScoreId);
         verify(userScoresRepository, never()).save(any());

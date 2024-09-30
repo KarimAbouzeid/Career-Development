@@ -31,18 +31,21 @@ public class UserScoresService {
         return userScoresMapper.toUserScoresDTO(userScore);
     }
 
-    @Transactional
-    public UserScoresDTO updateUserScore(UUID id, UserScoresDTO userScoresDTO) {
-        UserScores existingScore = usersScoresRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
+
+    public UserScoresDTO updateUserScore(UserScoresDTO userScoresDTO) {
+        UserScores existingScore = usersScoresRepository.findById(userScoresDTO.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + userScoresDTO.getUserId() + " not found"));
         userScoresMapper.updateUserScoresFromDTO(userScoresDTO, existingScore);
         UserScores updatedScore = usersScoresRepository.save(existingScore);
         return userScoresMapper.toUserScoresDTO(updatedScore);
     }
 
-    @Transactional
+
     public UserScoresDTO addUserScore(UserScoresDTO userScoresDTO) {
+
         UserScores userScores = userScoresMapper.toUserScores(userScoresDTO);
+        userScores.setUserId(userScoresDTO.getUserId());
+
         UserScores savedUserScore = usersScoresRepository.save(userScores);
         return userScoresMapper.toUserScoresDTO(savedUserScore);
     }

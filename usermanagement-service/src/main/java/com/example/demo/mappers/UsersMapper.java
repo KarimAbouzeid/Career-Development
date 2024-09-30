@@ -1,6 +1,7 @@
 package com.example.demo.mappers;
 
 import com.example.demo.dtos.UsersDTO;
+import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.entities.Users;
 import org.mapstruct.*;
 
@@ -22,6 +23,14 @@ public interface UsersMapper {
     @Mapping(target = "titleId", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUsersFromDto(UsersDTO usersDTO, @MappingTarget Users users);
+
+
+    UsersSignUpDTO toUsersSignupDTO(Users users);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "manager", ignore = true)
+    @Mapping(target = "titleId", ignore = true)
+    Users toUsers(UsersSignUpDTO usersSignUpDTO);
 
 
 }

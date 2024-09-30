@@ -3,6 +3,7 @@ package com.example.demo.controller;
 
 import com.example.demo.controllers.UsersController;
 import com.example.demo.dtos.UsersDTO;
+import com.example.demo.dtos.UsersSignUpDTO;
 import exceptions.GlobalExceptionHandler;
 import exceptions.InvalidCredentialsException;
 import com.example.demo.services.UsersServices;
@@ -33,9 +34,17 @@ public class UsersControllerTests {
     private UsersServices usersServices;
 
     private UsersDTO usersDTO;
+    private UsersSignUpDTO usersSignUpDTO;
+
 
     @BeforeEach
     public void setUp() {
+        usersSignUpDTO = new UsersSignUpDTO();
+        usersSignUpDTO.setFirstName("John");
+        usersSignUpDTO.setLastName("Doe");
+        usersSignUpDTO.setEmail("johndoe@example.com");
+        usersSignUpDTO.setPassword("password");
+
         usersDTO = new UsersDTO();
         usersDTO.setFirstName("John");
         usersDTO.setLastName("Doe");
@@ -78,6 +87,32 @@ public class UsersControllerTests {
 
         mockMvc.perform(get("/api/users/{id}", userId)
                         .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("An error occurred. Please try again later."));
+    }
+
+    @Test
+    public void addUser_userDetailsEntered_ReturnsUsersDTO() throws Exception {
+        when(usersServices.addUser(any(UsersDTO.class))).thenReturn(usersDTO);
+
+        mockMvc.perform(post("/api/users/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"johndoe@example.com\", \"password\": \"password123\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.email").value("johndoe@example.com"));
+
+        verify(usersServices, times(1)).addUser(any(UsersDTO.class));
+    }
+
+    @Test
+    void addUser_unexpectedError_returnsInternalServerError() throws Exception {
+        when(usersServices.addUser(any(UsersDTO.class))).thenThrow(new RuntimeException());
+
+        mockMvc.perform(post("/api/users/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"johndoe@example.com\", \"password\": \"password123\"}"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("An error occurred. Please try again later."));
     }
@@ -169,11 +204,6 @@ public class UsersControllerTests {
                 .andExpect(content().string("An error occurred. Please try again later."));
     }
 
-    @Test
-    public void getAllUsers_validRequest_ReturnsPaginatedUsers() throws Exception {
-        // Mock the usersServices.getAllUsers() to return a page of UsersDTO
-        // This part may require a custom setup for Page<UsersDTO>
-    }
 
     @Test
     public void login_validCredentials_ReturnsUsersDTO() throws Exception {
@@ -207,9 +237,10 @@ public class UsersControllerTests {
                 .andExpect(content().string("Invalid password"));
     }
 
+
     @Test
-    public void signUp_userDetailsEntered_ReturnsUsersDTO() throws Exception {
-        when(usersServices.addUser(any(UsersDTO.class))).thenReturn(usersDTO);
+    public void signUp_userDetailsEntered_ReturnsUsersSignUpDTO() throws Exception {
+        when(usersServices.signUp(any(UsersSignUpDTO.class))).thenReturn(usersSignUpDTO);
 
         mockMvc.perform(post("/api/users/signUp")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -219,12 +250,12 @@ public class UsersControllerTests {
                 .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.email").value("johndoe@example.com"));
 
-        verify(usersServices, times(1)).addUser(any(UsersDTO.class));
+        verify(usersServices, times(1)).signUp(any(UsersSignUpDTO.class));
     }
 
     @Test
     void signUp_unexpectedError_returnsInternalServerError() throws Exception {
-        when(usersServices.addUser(any(UsersDTO.class))).thenThrow(new RuntimeException());
+        when(usersServices.signUp(any(UsersSignUpDTO.class))).thenThrow(new RuntimeException());
 
         mockMvc.perform(post("/api/users/signUp")
                         .contentType(MediaType.APPLICATION_JSON)

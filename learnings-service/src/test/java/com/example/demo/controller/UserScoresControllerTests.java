@@ -46,6 +46,8 @@ public class UserScoresControllerTests {
         userScoreId = UUID.randomUUID();
         userScoresDTO = new UserScoresDTO();
         userScoresDTO.setScore(100);
+        userScoresDTO.setUserId(userScoreId);
+
     }
 
     @Test
@@ -77,7 +79,7 @@ public class UserScoresControllerTests {
 
         mockMvc.perform(post("/api/userScores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"score\": 100, \"level\": 5}"))
+                        .content("{\"score\": 100}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.score").value(100));
         verify(userScoresService, times(1)).addUserScore(any(UserScoresDTO.class));
@@ -85,27 +87,27 @@ public class UserScoresControllerTests {
 
     @Test
     public void updateUserScore_userExists_ReturnsUpdatedUserScoresDTO() throws Exception {
-        when(userScoresService.updateUserScore(eq(userScoreId), any(UserScoresDTO.class))).thenReturn(userScoresDTO);
+        when(userScoresService.updateUserScore(any(UserScoresDTO.class))).thenReturn(userScoresDTO);
 
         mockMvc.perform(put("/api/userScores/{id}", userScoreId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"score\": 150, \"level\": 6}"))
+                        .content("{\"score\": 150}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.score").value(100));
-        verify(userScoresService, times(1)).updateUserScore(eq(userScoreId), any(UserScoresDTO.class));
+        verify(userScoresService, times(1)).updateUserScore(any(UserScoresDTO.class));
     }
 
     @Test
     public void updateUserScore_userNotExists_ReturnsNotFound() throws Exception {
-        when(userScoresService.updateUserScore(eq(userScoreId), any(UserScoresDTO.class)))
+        when(userScoresService.updateUserScore(any(UserScoresDTO.class)))
                 .thenThrow(new EntityNotFoundException("User score not found"));
 
         mockMvc.perform(put("/api/userScores/{id}", userScoreId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"score\": 150, \"level\": 6}"))
+                        .content("{\"score\": 150}"))
                 .andExpect(status().isNotFound());
 
-        verify(userScoresService, times(1)).updateUserScore(eq(userScoreId), any(UserScoresDTO.class));
+        verify(userScoresService, times(1)).updateUserScore(any(UserScoresDTO.class));
     }
 
     @Test

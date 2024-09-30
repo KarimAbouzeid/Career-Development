@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dtos.UsersDTO;
+import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.services.UsersServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -57,8 +58,8 @@ public class UsersController {
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<UsersDTO> signUp(@RequestBody UsersDTO usersDTO) {
-        UsersDTO createdUser = usersServices.addUser(usersDTO);
+    public ResponseEntity<UsersSignUpDTO> signUp(@RequestBody UsersSignUpDTO usersDTO) {
+        UsersSignUpDTO createdUser = usersServices.signUp(usersDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 

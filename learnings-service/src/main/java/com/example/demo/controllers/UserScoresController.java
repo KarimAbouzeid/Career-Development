@@ -4,6 +4,7 @@ import com.example.demo.dtos.UserScoresDTO;
 import com.example.demo.services.UserScoresService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,14 @@ public class UserScoresController {
     }
 
     @PostMapping
-    public ResponseEntity<UserScoresDTO> addUserScore(@RequestBody UserScoresDTO userScoresDTO) {
-        UserScoresDTO createdUserScore = userScoresService.addUserScore(userScoresDTO);
+    public ResponseEntity<UserScoresDTO> addUserScore( @RequestBody UserScoresDTO userScoresDTO) {
+        UserScoresDTO createdUserScore = userScoresService.addUserScore( userScoresDTO);
         return new ResponseEntity<>(createdUserScore, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserScoresDTO> updateUserScore(@PathVariable UUID id, @RequestBody UserScoresDTO userScoresDTO) {
-        UserScoresDTO updatedUserScore = userScoresService.updateUserScore(id, userScoresDTO);
+    @PutMapping
+    public ResponseEntity<UserScoresDTO> updateUserScore( @RequestBody UserScoresDTO userScoresDTO) {
+        UserScoresDTO updatedUserScore = userScoresService.updateUserScore( userScoresDTO);
         return new ResponseEntity<>(updatedUserScore, HttpStatus.OK);
     }
 
@@ -47,8 +48,13 @@ public class UserScoresController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserScoresDTO>> getAllUserScores(Pageable pageable) {
+    public ResponseEntity<Page<UserScoresDTO>> getAllUserScores(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
         Page<UserScoresDTO> userScores = userScoresService.getAllUserScores(pageable);
         return new ResponseEntity<>(userScores, HttpStatus.OK);
     }
+
 }
