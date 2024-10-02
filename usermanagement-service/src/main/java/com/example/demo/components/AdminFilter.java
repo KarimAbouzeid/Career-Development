@@ -15,6 +15,7 @@ public class AdminFilter extends HttpFilter {
 
     @Override
     public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException, ServletException {
+        
         String uri = request.getRequestURI();
         System.out.println(uri);
 

@@ -3,9 +3,11 @@ package com.example.demo.services;
 
 import com.example.demo.dtos.UsersDTO;
 import com.example.demo.dtos.UsersSignUpDTO;
+import com.example.demo.entities.Role;
 import com.example.demo.entities.Titles;
 import com.example.demo.entities.Users;
 import com.example.demo.mappers.UsersMapper;
+import com.example.demo.repositories.RoleRepository;
 import com.example.demo.repositories.TitlesRepository;
 import com.example.demo.repositories.UsersRepository;
 import exceptions.InvalidCredentialsException;
@@ -14,6 +16,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,15 +26,20 @@ import java.util.*;
 public class UsersServices {
 
     private final UsersRepository usersRepository;
+    private final RoleRepository roleRepository;
     private final TitlesRepository titlesRepository;
     private final UsersMapper usersMapper;
+    private final PasswordEncoder passwordEncoder;
+
 
 
     @Autowired
-    public UsersServices(UsersRepository usersRepository, UsersMapper usersMapper, TitlesRepository titlesRepository) {
+    public UsersServices(UsersRepository usersRepository, UsersMapper usersMapper, TitlesRepository titlesRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.usersRepository = usersRepository;
         this.usersMapper = usersMapper;
         this.titlesRepository = titlesRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     public UsersDTO getUser(UUID id) {
@@ -56,9 +65,14 @@ public class UsersServices {
             throw new UserAlreadyExistsException("User with email " + usersDTO.getEmail() + " already exists.");
         }
 
-        Users user = usersMapper.toUsers(usersDTO);
+        Role userRole = Optional.ofNullable(roleRepository.findByName("USER"))
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
 
+        usersDTO.setPassword(passwordEncoder.encode(usersDTO.getPassword()));
+        Users user = usersMapper.toUsers(usersDTO);
+        user.setRoles(Collections.singleton(userRole));
         usersRepository.save(user);
+
         return usersMapper.toUsersSignupDTO(user);
     }
 

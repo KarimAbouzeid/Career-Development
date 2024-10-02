@@ -9,15 +9,29 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
 
     private final UsersServices usersServices;
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public ResponseEntity<String> helloAdmin(){
+        return ResponseEntity.ok("Hello Admin");
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/user")
+    public ResponseEntity<String> helloUser(){
+        return ResponseEntity.ok("Hello User");
+    }
 
     @Autowired
     public UsersController(UsersServices usersServices) {
@@ -52,7 +66,7 @@ public class UsersController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsersDTO> login(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<UsersDTO> login( @RequestParam String email, @RequestParam String password) {
             UsersDTO userDTO = usersServices.login(email, password);
             return ResponseEntity.ok(userDTO);
     }
