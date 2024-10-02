@@ -48,6 +48,13 @@ public class UsersServices {
         return usersMapper.toUsersDTO(user);
     }
 
+    public UsersDTO getUserByEmail(String email) {
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found"));
+
+        return usersMapper.toUsersDTO(user);
+    }
+
     public UsersDTO login(String email, String password) {
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found"));
@@ -157,6 +164,52 @@ public class UsersServices {
     }
 
 
+    public UsersDTO freezeUserByEmail(String email) {
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+
+        user.setFrozen(true);
+        usersRepository.save(user);
+
+        return usersMapper.toUsersDTO(user);
+    }
+
+    public UsersDTO unfreezeUserByEmail(String email) {
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+
+        user.setFrozen(false);
+        usersRepository.save(user);
+
+        return usersMapper.toUsersDTO(user);
+    }
+
+    public void deleteUserByEmail(String email) {
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+        usersRepository.delete(user);
+    }
+
+
+    public void resetPassword(String email, String newPassword) {
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        usersRepository.save(user);
+    }
+
+
+    public void assignManager(String userEmail, String managerEmail) {
+        Users user = usersRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + userEmail));
+
+        Users manager = usersRepository.findByEmail(managerEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Manager not found with email: " + managerEmail));
+
+        user.setManager(manager);
+
+        usersRepository.save(user);
+    }
 
 
 }
