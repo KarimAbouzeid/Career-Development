@@ -1,5 +1,8 @@
 package com.example.demo.components;
 
+import com.example.demo.dtos.UsersDTO;
+import com.example.demo.entities.Users;
+import com.example.demo.services.UsersServices;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,11 +26,13 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final UserDetailsService userDetailsService;
+    private final UsersServices usersServices;
 
     @Autowired
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService, UsersServices usersServices) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
+        this.usersServices = usersServices;
     }
 
     // This method is executed for every request intercepted by the filter.
@@ -41,10 +46,15 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
 
         //Validate Token
         if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
-            // get username from token
             String email = jwtTokenProvider.getEmail(token);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            UsersDTO user = usersServices.getUserByEmail(email);
+
+            if (user != null && user.isFrozen()) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "User account is frozen");
+                return;
+            }
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails,

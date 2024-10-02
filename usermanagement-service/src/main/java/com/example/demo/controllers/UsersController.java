@@ -82,4 +82,38 @@ public class UsersController {
         UsersDTO createdUser = usersServices.addUser(usersDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
+
+    @PutMapping("/freeze")
+    public ResponseEntity<String> freezeUser(@RequestParam String email) {
+        UsersDTO frozenUser = usersServices.freezeUserByEmail(email);
+        return ResponseEntity.ok("User with email " + email + " has been frozen.");
+    }
+
+    @PutMapping("/unfreeze")
+    public ResponseEntity<String> unfreezeUser(@RequestParam String email) {
+        UsersDTO unfrozenUser = usersServices.unfreezeUserByEmail(email);
+        return ResponseEntity.ok("User with email " + email + " has been unfrozen.");
+    }
+
+
+    @DeleteMapping("/deleteByEmail")
+    public ResponseEntity<String> deleteUserByEmail(@RequestParam String email) {
+        usersServices.deleteUserByEmail(email);
+        return ResponseEntity.ok("User with email " + email + " has been deleted.");
+    }
+
+    @PutMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String newPassword) {
+        usersServices.resetPassword(email, newPassword);
+        return ResponseEntity.ok("Password for user with email " + email + " has been reset.");
+    }
+
+    @PutMapping("/assignManager")
+    public ResponseEntity<String> assignManagerByEmail(@RequestParam String userEmail, @RequestParam String managerEmail) {
+        usersServices.assignManager(userEmail, managerEmail);
+        return ResponseEntity.ok("Manager assigned successfully.");
+    }
+
+
+
 }

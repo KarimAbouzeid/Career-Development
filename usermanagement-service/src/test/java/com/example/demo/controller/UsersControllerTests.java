@@ -267,4 +267,159 @@ public class UsersControllerTests {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("An error occurred. Please try again later."));
     }
+
+
+    @Test
+    public void freezeUser_userExists_ReturnsSuccessMessage() throws Exception {
+        String email = "test@example.com";
+        doReturn(new UsersDTO()).when(usersServices).freezeUserByEmail(email);
+
+        mockMvc.perform(put("/api/users/freeze").param("email", email))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User with email " + email + " has been frozen."));
+
+        verify(usersServices, times(1)).freezeUserByEmail(email);
+    }
+
+    @Test
+    public void freezeUser_userNotExists_ReturnsNotFound() throws Exception {
+        String email = "test@example.com";
+        doThrow(new EntityNotFoundException("User not found with email: " + email))
+                .when(usersServices).freezeUserByEmail(email);
+
+        mockMvc.perform(put("/api/users/freeze").param("email", email))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with email: " + email));
+
+        verify(usersServices, times(1)).freezeUserByEmail(email);
+    }
+
+    @Test
+    public void unfreezeUser_userExists_ReturnsSuccessMessage() throws Exception {
+        String email = "test@example.com";
+        doReturn(new UsersDTO()).when(usersServices).unfreezeUserByEmail(email);
+
+        mockMvc.perform(put("/api/users/unfreeze").param("email", email))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User with email " + email + " has been unfrozen."));
+
+        verify(usersServices, times(1)).unfreezeUserByEmail(email);
+    }
+
+    @Test
+    public void unfreezeUser_userNotExists_ReturnsNotFound() throws Exception {
+        String email = "test@example.com";
+        doThrow(new EntityNotFoundException("User not found with email: " + email))
+                .when(usersServices).unfreezeUserByEmail(email);
+
+        mockMvc.perform(put("/api/users/unfreeze").param("email", email))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with email: " + email));
+
+        verify(usersServices, times(1)).unfreezeUserByEmail(email);
+    }
+
+    @Test
+    public void deleteUserByEmail_userExists_ReturnsSuccessMessage() throws Exception {
+        String email = "test@example.com";
+        doNothing().when(usersServices).deleteUserByEmail(email);
+
+        mockMvc.perform(delete("/api/users/deleteByEmail").param("email", email))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User with email " + email + " has been deleted."));
+
+        verify(usersServices, times(1)).deleteUserByEmail(email);
+    }
+
+    @Test
+    public void deleteUserByEmail_userNotExists_ReturnsNotFound() throws Exception {
+        String email = "test@example.com";
+        doThrow(new EntityNotFoundException("User not found with email: " + email))
+                .when(usersServices).deleteUserByEmail(email);
+
+        mockMvc.perform(delete("/api/users/deleteByEmail").param("email", email))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with email: " + email));
+
+        verify(usersServices, times(1)).deleteUserByEmail(email);
+    }
+
+    @Test
+    public void resetPassword_userExists_ReturnsSuccessMessage() throws Exception {
+        String email = "test@example.com";
+        String newPassword = "newPassword";
+        doNothing().when(usersServices).resetPassword(email, newPassword);
+
+        mockMvc.perform(put("/api/users/resetPassword")
+                        .param("email", email)
+                        .param("newPassword", newPassword))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Password for user with email " + email + " has been reset."));
+
+        verify(usersServices, times(1)).resetPassword(email, newPassword);
+    }
+
+    @Test
+    public void resetPassword_userNotExists_ReturnsNotFound() throws Exception {
+        String email = "test@example.com";
+        String newPassword = "newPassword";
+        doThrow(new EntityNotFoundException("User not found with email: " + email))
+                .when(usersServices).resetPassword(email, newPassword);
+
+        mockMvc.perform(put("/api/users/resetPassword")
+                        .param("email", email)
+                        .param("newPassword", newPassword))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with email: " + email));
+
+        verify(usersServices, times(1)).resetPassword(email, newPassword);
+    }
+
+    @Test
+    public void assignManagerByEmail_success_ReturnsSuccessMessage() throws Exception {
+        String userEmail = "user@example.com";
+        String managerEmail = "manager@example.com";
+        doNothing().when(usersServices).assignManager(userEmail, managerEmail);
+
+        mockMvc.perform(put("/api/users/assignManager")
+                        .param("userEmail", userEmail)
+                        .param("managerEmail", managerEmail))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Manager assigned successfully."));
+
+        verify(usersServices, times(1)).assignManager(userEmail, managerEmail);
+    }
+
+    @Test
+    public void assignManagerByEmail_userNotExists_ReturnsNotFound() throws Exception {
+        String userEmail = "user@example.com";
+        String managerEmail = "manager@example.com";
+        doThrow(new EntityNotFoundException("User not found with email: " + userEmail))
+                .when(usersServices).assignManager(userEmail, managerEmail);
+
+        mockMvc.perform(put("/api/users/assignManager")
+                        .param("userEmail", userEmail)
+                        .param("managerEmail", managerEmail))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with email: " + userEmail));
+
+        verify(usersServices, times(1)).assignManager(userEmail, managerEmail);
+    }
+
+    @Test
+    public void assignManagerByEmail_managerNotExists_ReturnsNotFound() throws Exception {
+        String userEmail = "user@example.com";
+        String managerEmail = "manager@example.com";
+        doThrow(new EntityNotFoundException("Manager not found with email: " + managerEmail))
+                .when(usersServices).assignManager(userEmail, managerEmail);
+
+        mockMvc.perform(put("/api/users/assignManager")
+                        .param("userEmail", userEmail)
+                        .param("managerEmail", managerEmail))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Manager not found with email: " + managerEmail));
+
+        verify(usersServices, times(1)).assignManager(userEmail, managerEmail);
+    }
+
 }
