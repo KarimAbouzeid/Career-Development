@@ -16,7 +16,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,8 +64,9 @@ public class UsersServices {
             throw new UserAlreadyExistsException("User with email " + usersDTO.getEmail() + " already exists.");
         }
 
-        Role userRole = Optional.ofNullable(roleRepository.findByName("USER"))
+        Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
 
         usersDTO.setPassword(passwordEncoder.encode(usersDTO.getPassword()));
         Users user = usersMapper.toUsers(usersDTO);
@@ -95,10 +95,11 @@ public class UsersServices {
         return usersMapper.toUsersDTO(user);
     }
 
-    public UsersDTO updateUsers(UUID id, UsersDTO usersUpdateDTO) {
+    public UsersDTO updateUsers( UsersDTO usersUpdateDTO) {
         Map<String, Object> managerAndTitle = getManagerAndTitle(usersUpdateDTO);
         Users manager = (Users) managerAndTitle.get("manager");
         Titles title = (Titles) managerAndTitle.get("title");
+        UUID id = usersUpdateDTO.getId();
 
         Users user = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));

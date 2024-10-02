@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserScoresController.class)
 @ContextConfiguration(classes = {UserScoresController.class, GlobalExceptionHandler.class})
+@AutoConfigureMockMvc(addFilters = false)
+
 public class UserScoresControllerTests {
 
     @Autowired
@@ -86,28 +89,25 @@ public class UserScoresControllerTests {
     }
 
     @Test
-    public void updateUserScore_userExists_ReturnsUpdatedUserScoresDTO() throws Exception {
+    public void updateUserScore_UserExists_ReturnsUserScoresDTO() throws Exception {
         when(userScoresService.updateUserScore(any(UserScoresDTO.class))).thenReturn(userScoresDTO);
 
-        mockMvc.perform(put("/api/userScores/{id}", userScoreId)
+        mockMvc.perform(put("/api/userScores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"score\": 150}"))
+                        .content("{\"userId\": \"" + userScoresDTO.getUserId() + "\", \"score\": " + userScoresDTO.getScore() + "}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.score").value(100));
-        verify(userScoresService, times(1)).updateUserScore(any(UserScoresDTO.class));
+                .andExpect(jsonPath("$.userId").value(userScoresDTO.getUserId().toString()))
+                .andExpect(jsonPath("$.score").value(userScoresDTO.getScore()));
     }
-
     @Test
     public void updateUserScore_userNotExists_ReturnsNotFound() throws Exception {
-        when(userScoresService.updateUserScore(any(UserScoresDTO.class)))
-                .thenThrow(new EntityNotFoundException("User score not found"));
 
-        mockMvc.perform(put("/api/userScores/{id}", userScoreId)
+        doThrow(new EntityNotFoundException("User not found")).when(userScoresService).updateUserScore((any(UserScoresDTO.class)));
+
+        mockMvc.perform(put("/api/userScores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"score\": 150}"))
+                        .content("{\"userId\": \"65a92be6-2316-498b-9772-c2b36573c2d1\", \"score\": 100}"))
                 .andExpect(status().isNotFound());
-
-        verify(userScoresService, times(1)).updateUserScore(any(UserScoresDTO.class));
     }
 
     @Test

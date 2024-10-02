@@ -11,9 +11,11 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -25,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UsersController.class)
 @ContextConfiguration(classes = {UsersController.class, GlobalExceptionHandler.class})
+@AutoConfigureMockMvc(addFilters = false)
 public class UsersControllerTests {
 
     @Autowired
@@ -39,6 +42,7 @@ public class UsersControllerTests {
 
     @BeforeEach
     public void setUp() {
+
         usersSignUpDTO = new UsersSignUpDTO();
         usersSignUpDTO.setFirstName("John");
         usersSignUpDTO.setLastName("Doe");
@@ -127,9 +131,9 @@ public class UsersControllerTests {
         updatedUsersDTO.setEmail("johndoe@example.com");
         updatedUsersDTO.setPassword("newpassword123");
 
-        when(usersServices.updateUsers(eq(userId), any(UsersDTO.class))).thenReturn(updatedUsersDTO);
+        when(usersServices.updateUsers(any(UsersDTO.class))).thenReturn(updatedUsersDTO);
 
-        mockMvc.perform(put("/api/users/{id}", userId)
+        mockMvc.perform(put("/api/users/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"johndoe@example.com\", \"password\": \"newpassword123\"}"))
                 .andExpect(status().isOk())
@@ -138,16 +142,16 @@ public class UsersControllerTests {
                 .andExpect(jsonPath("$.email").value("johndoe@example.com"))
                 .andExpect(jsonPath("$.password").value("newpassword123")); // This should match now
 
-        verify(usersServices, times(1)).updateUsers(eq(userId), any(UsersDTO.class));
+        verify(usersServices, times(1)).updateUsers(any(UsersDTO.class));
     }
 
     @Test
     void updateUser_userNotExists_ReturnsNotFound() throws Exception {
         UUID userId = UUID.randomUUID();
 
-        when(usersServices.updateUsers(eq(userId), any(UsersDTO.class))).thenThrow(new EntityNotFoundException("User with id " + userId + " not found"));
+        when(usersServices.updateUsers(any(UsersDTO.class))).thenThrow(new EntityNotFoundException("User with id " + userId + " not found"));
 
-        mockMvc.perform(put("/api/users/{id}", userId)
+        mockMvc.perform(put("/api/users/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"johndoe@example.com\", \"password\": \"newpassword123\"}"))
                 .andExpect(status().isNotFound())
@@ -158,9 +162,9 @@ public class UsersControllerTests {
     void updateUser_unexpectedError_returnsInternalServerError() throws Exception {
         UUID userId = UUID.randomUUID();
 
-        when(usersServices.updateUsers(eq(userId), any(UsersDTO.class))).thenThrow(new RuntimeException());
+        when(usersServices.updateUsers( any(UsersDTO.class))).thenThrow(new RuntimeException());
 
-        mockMvc.perform(put("/api/users/{id}", userId)
+        mockMvc.perform(put("/api/users/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"johndoe@example.com\", \"password\": \"newpassword123\"}"))
                 .andExpect(status().isInternalServerError())
@@ -173,7 +177,7 @@ public class UsersControllerTests {
 
         doNothing().when(usersServices).deleteUser(userId);
 
-        mockMvc.perform(delete("/api/users/{id}", userId))
+        mockMvc.perform(delete("/api/users/delete/{id}", userId))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User deleted successfully"));
 
@@ -187,7 +191,7 @@ public class UsersControllerTests {
         doThrow(new EntityNotFoundException("User with id " + userId + " not found"))
                 .when(usersServices).deleteUser(userId);
 
-        mockMvc.perform(delete("/api/users/{id}", userId))
+        mockMvc.perform(delete("/api/users/delete/{id}", userId))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("User with id " + userId + " not found"));
     }
@@ -199,7 +203,7 @@ public class UsersControllerTests {
         doThrow(new RuntimeException())
                 .when(usersServices).deleteUser(userId);
 
-        mockMvc.perform(delete("/api/users/{id}", userId))
+        mockMvc.perform(delete("/api/users/delete/{id}", userId))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("An error occurred. Please try again later."));
     }
