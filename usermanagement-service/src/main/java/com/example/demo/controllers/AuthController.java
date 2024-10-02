@@ -48,8 +48,8 @@ public class AuthController {
 
         //03 - Return the response to the user
         return  ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body(authResponseDto);
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString()) // store the JWT token in a secure cookie
+                .body(authResponseDto); //includes the JWT token as part of the response body
     }
 
 }
