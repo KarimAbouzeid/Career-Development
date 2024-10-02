@@ -83,11 +83,11 @@ public class ScoreboardLevelsService {
         List<ScoreboardLevels> levels = scoreboardLevelsRepository.findAll();
 
         for (ScoreboardLevels level : levels) {
-            if (score < level.getMinScore()) {
+            if (score <= level.getMinScore()) {
                 return level.getLevelName();
             }
         }
-        return "Unknown Level"; // Fallback in case no level matches
+        return "Guru";
     }
 
 }
