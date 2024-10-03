@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*",allowCredentials = "true")
 @RestController
 @RequestMapping("/api/scoreboardLevels")
 public class ScoreboardLevelsController {

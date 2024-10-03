@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
+
 @RestController
 @RequestMapping("/api/titles")
 public class TitlesController {
