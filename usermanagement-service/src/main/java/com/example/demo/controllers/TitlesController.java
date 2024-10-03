@@ -1,12 +1,14 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dtos.TitlesDTO;
+import com.example.demo.entities.Titles;
 import com.example.demo.services.TitlesServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -43,5 +45,11 @@ public class TitlesController {
             titlesServices.deleteTitles(id);
         return ResponseEntity.ok("Title deleted successfully");
 
+    }
+
+    @GetMapping("/getByDepartment/{id}")
+    public ResponseEntity<List<TitlesDTO>> getTitlesByDepartment(@PathVariable UUID id) {
+        List<TitlesDTO> titles = titlesServices.getTitlesByDepartment(id);
+        return ResponseEntity.ok(titles);
     }
 }

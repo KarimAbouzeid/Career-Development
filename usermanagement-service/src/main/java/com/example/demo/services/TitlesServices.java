@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TitlesServices {
@@ -75,8 +77,6 @@ public class TitlesServices {
         if(titlesDTO.getDepartmentId() == null)
             return result;
 
-
-
         UUID departmentId = titlesDTO.getDepartmentId();
 
         Departments department = departmentsRepository.findById(departmentId).orElseThrow(
@@ -86,5 +86,16 @@ public class TitlesServices {
 
         return result;
 
+    }
+
+
+    public List<TitlesDTO> getTitlesByDepartment(UUID departmentId) {
+        Departments department = departmentsRepository.findById(departmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Department with id " + departmentId + " not found"));
+        List<Titles> titles = titlesRepository.findByDepartmentId(department);
+
+        return titles.stream()
+                .map(titlesMapper::toTitlesDTO)
+                .collect(Collectors.toList());
     }
 }

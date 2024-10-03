@@ -134,5 +134,16 @@ public class DepartmentsServicesTests {
         verify(departmentsRepository, never()).deleteById(uuid);
     }
 
+    @Test
+    public void DepartmentsService_GetAllDepartments_ReturnsDepartmentsDTO() {
+        UUID uuid = UUID.randomUUID();
 
+        when(departmentsRepository.findById(uuid)).thenReturn(Optional.of(departments1));
+        when(departmentsMapper.toDepartmentsDTO(departments1)).thenReturn(departmentsDTO1);
+
+        DepartmentsDTO returnedDepartmentsDTO = departmentsServices.getDepartment(uuid);
+
+        verify(departmentsRepository, times(1)).findById(uuid);
+        Assertions.assertEquals(returnedDepartmentsDTO, departmentsDTO1);
+    }
 }

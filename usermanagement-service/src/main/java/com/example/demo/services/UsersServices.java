@@ -1,11 +1,13 @@
 package com.example.demo.services;
 
 
+import com.example.demo.dtos.TitlesDTO;
 import com.example.demo.dtos.UsersDTO;
 import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.entities.Role;
 import com.example.demo.entities.Titles;
 import com.example.demo.entities.Users;
+import com.example.demo.mappers.TitlesMapper;
 import com.example.demo.mappers.UsersMapper;
 import com.example.demo.repositories.RoleRepository;
 import com.example.demo.repositories.TitlesRepository;
@@ -27,18 +29,21 @@ public class UsersServices {
     private final UsersRepository usersRepository;
     private final RoleRepository roleRepository;
     private final TitlesRepository titlesRepository;
+    private final TitlesMapper titlesMapper;
     private final UsersMapper usersMapper;
     private final PasswordEncoder passwordEncoder;
-
+    private final TitlesServices titlesServices;
 
 
     @Autowired
-    public UsersServices(UsersRepository usersRepository, UsersMapper usersMapper, TitlesRepository titlesRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UsersServices(UsersRepository usersRepository, TitlesMapper titlesMapper, UsersMapper usersMapper, TitlesRepository titlesRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, TitlesServices titlesServices) {
         this.usersRepository = usersRepository;
+        this.titlesMapper = titlesMapper;
         this.usersMapper = usersMapper;
         this.titlesRepository = titlesRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.titlesServices = titlesServices;
     }
 
     public UsersDTO getUser(UUID id) {
@@ -212,4 +217,17 @@ public class UsersServices {
     }
 
 
+    public void assignTitleByEmail(String email, UUID titleId) {
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+
+        TitlesDTO titleDTO = titlesServices.getTitles(titleId);
+        Titles title = titlesMapper.toTitle(titleDTO);
+        title.setId(titleId);
+        user.setTitleId(title);
+        usersRepository.save(user);
+    }
+
+
 }
+

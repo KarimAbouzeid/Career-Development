@@ -16,8 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -143,5 +142,67 @@ public class TitlesServicesTests {
 
         verify(titlesRepository, times(1)).existsById(uuid);
         verify(titlesRepository, never()).deleteById(uuid);
+    }
+
+
+    @Test
+    public void getTitlesByDepartment_success_ReturnsTitlesList() {
+        UUID departmentId = UUID.randomUUID();
+        Departments department = new Departments(departmentId, "IT", null);
+
+        Titles title1 = new Titles(UUID.randomUUID(), "Software Engineer", false, null, department);
+        Titles title2 = new Titles(UUID.randomUUID(), "Project Manager", true, null, department);
+        List<Titles> titlesList = Arrays.asList(title1, title2);
+
+        TitlesDTO titleDTO1 = new TitlesDTO(title1.getTitle(), title1.getIsManager(), departmentId);
+        TitlesDTO titleDTO2 = new TitlesDTO(title2.getTitle(), title2.getIsManager(), departmentId);
+
+        when(departmentsRepository.findById(departmentId)).thenReturn(Optional.of(department));
+        when(titlesRepository.findByDepartmentId(department)).thenReturn(titlesList);
+        when(titlesMapper.toTitlesDTO(title1)).thenReturn(titleDTO1);
+        when(titlesMapper.toTitlesDTO(title2)).thenReturn(titleDTO2);
+
+        List<TitlesDTO> result = titlesServices.getTitlesByDepartment(departmentId);
+
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("Software Engineer", result.get(0).getTitle());
+        Assertions.assertEquals("Project Manager", result.get(1).getTitle());
+
+        verify(departmentsRepository, times(1)).findById(departmentId);
+        verify(titlesRepository, times(1)).findByDepartmentId(department);
+        verify(titlesMapper, times(1)).toTitlesDTO(title1);
+        verify(titlesMapper, times(1)).toTitlesDTO(title2);
+    }
+
+    @Test
+    public void getTitlesByDepartment_departmentNotFound_ThrowsEntityNotFoundException() {
+        UUID departmentId = UUID.randomUUID();
+
+        when(departmentsRepository.findById(departmentId)).thenReturn(Optional.empty());
+
+        EntityNotFoundException thrown = Assertions.assertThrows(EntityNotFoundException.class, () -> {
+            titlesServices.getTitlesByDepartment(departmentId);
+        });
+
+        Assertions.assertEquals("Department with id " + departmentId + " not found", thrown.getMessage());
+        verify(departmentsRepository, times(1)).findById(departmentId);
+        verify(titlesRepository, never()).findByDepartmentId(any());
+    }
+
+    @Test
+    public void getTitlesByDepartment_noTitlesFound_ReturnsEmptyList() {
+
+        UUID departmentId = UUID.randomUUID();
+        Departments department = new Departments(departmentId, "HR", null);
+
+        when(departmentsRepository.findById(departmentId)).thenReturn(Optional.of(department));
+        when(titlesRepository.findByDepartmentId(department)).thenReturn(new ArrayList<>());
+
+        List<TitlesDTO> result = titlesServices.getTitlesByDepartment(departmentId);
+
+        Assertions.assertTrue(result.isEmpty());
+
+        verify(departmentsRepository, times(1)).findById(departmentId);
+        verify(titlesRepository, times(1)).findByDepartmentId(department);
     }
 }
