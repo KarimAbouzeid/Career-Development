@@ -1,7 +1,9 @@
 package com.example.demo.services;
 
+import com.example.demo.dtos.TitlesDTO;
 import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.entities.Role;
+import com.example.demo.mappers.TitlesMapper;
 import com.example.demo.repositories.RoleRepository;
 import com.example.demo.repositories.UsersRepository;
 import com.example.demo.repositories.TitlesRepository;
@@ -42,6 +44,12 @@ public class UsersServicesTests {
     private TitlesRepository titlesRepository;
 
     @Mock
+    private TitlesServices titlesServices;
+
+    @Mock
+    private TitlesMapper titlesMapper;
+
+    @Mock
     private UsersMapper usersMapper;
 
     @Mock
@@ -54,6 +62,8 @@ public class UsersServicesTests {
     private UsersSignUpDTO usersSignUpDTO;
     private Users user;
     private Titles title;
+    private TitlesDTO titleDTO;
+
 
     @BeforeEach
     public void setUp() {
@@ -75,6 +85,9 @@ public class UsersServicesTests {
         title = new Titles();
         title.setId(UUID.randomUUID());
         title.setTitle("Software Engineer");
+
+        titleDTO = new TitlesDTO();
+
     }
 
     @Test
@@ -363,5 +376,54 @@ public class UsersServicesTests {
         when(usersRepository.findByEmail(managerEmail)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> usersServices.assignManager(userEmail, managerEmail));
+    }
+
+    @Test
+    public void assignTitleByEmail_Success() {
+        String userEmail = "user@example.com";
+        UUID titleId = UUID.randomUUID();
+
+        when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(titlesServices.getTitles(titleId)).thenReturn(titleDTO);
+        when(titlesMapper.toTitle(titleDTO)).thenReturn(title);
+
+        assertDoesNotThrow(() -> usersServices.assignTitleByEmail(userEmail, titleId));
+
+        assertEquals(title, user.getTitleId());
+        verify(usersRepository, times(1)).save(user);
+        verify(usersRepository, times(1)).findByEmail(userEmail);
+        verify(titlesServices, times(1)).getTitles(titleId);
+        verify(titlesMapper, times(1)).toTitle(titleDTO);
+    }
+
+    @Test
+    public void assignTitleByEmail_UserNotFound_ThrowsException() {
+        String userEmail = "user@example.com";
+        UUID titleId = UUID.randomUUID();
+
+        when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> usersServices.assignTitleByEmail(userEmail, titleId));
+
+        verify(usersRepository, times(1)).findByEmail(userEmail);
+        verify(titlesServices, never()).getTitles(any());
+        verify(titlesMapper, never()).toTitle(any());
+        verify(usersRepository, never()).save(any());
+    }
+
+    @Test
+    public void assignTitleByEmail_TitleNotFound_ThrowsException() {
+        String userEmail = "user@example.com";
+        UUID titleId = UUID.randomUUID();
+
+        when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(titlesServices.getTitles(titleId)).thenThrow(new EntityNotFoundException("Title not found"));
+
+        assertThrows(EntityNotFoundException.class, () -> usersServices.assignTitleByEmail(userEmail, titleId));
+
+        verify(usersRepository, times(1)).findByEmail(userEmail);
+        verify(titlesServices, times(1)).getTitles(titleId);
+        verify(titlesMapper, never()).toTitle(any());
+        verify(usersRepository, never()).save(any());
     }
 }

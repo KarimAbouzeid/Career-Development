@@ -116,6 +116,12 @@ public class UsersController {
         return ResponseEntity.ok("Manager assigned successfully.");
     }
 
+    @PutMapping("/assignTitle")
+    public ResponseEntity<String> assignTitleByEmail(@RequestParam String email, @RequestParam UUID titleId) {
+        usersServices.assignTitleByEmail(email, titleId);
+        return ResponseEntity.ok("Title assigned successfully");
+    }
+
 
 
 }
