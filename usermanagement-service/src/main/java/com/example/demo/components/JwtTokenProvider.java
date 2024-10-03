@@ -1,5 +1,6 @@
 package com.example.demo.components;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
@@ -49,11 +50,17 @@ public class JwtTokenProvider   {
 
     public boolean validateToken(String token){
 
-        Jwts.parser()
-                .verifyWith((SecretKey) key())
-                .build()
-                .parse(token);
-        return true;
+        try {
+            Jwts.parser()
+                    .verifyWith((SecretKey) key())
+                    .build()
+                    .parse(token);
+            return true; // Token is valid
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+
+
 
     }
 

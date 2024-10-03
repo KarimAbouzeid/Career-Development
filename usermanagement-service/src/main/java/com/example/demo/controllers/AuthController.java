@@ -37,7 +37,7 @@ public class AuthController {
 
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
                 .httpOnly(true)
-                .maxAge(3600)
+                .maxAge(36000)
                 .path("/")
                 .build();
 
@@ -50,6 +50,11 @@ public class AuthController {
         return  ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(authResponseDto);
+    }
+
+    @PostMapping("/isTokenValid")
+    public ResponseEntity<Boolean> isTokenValid(@RequestBody String token){
+        return new ResponseEntity<Boolean>(this.authService.isTokenValid(token), HttpStatus.OK);
     }
 
 }

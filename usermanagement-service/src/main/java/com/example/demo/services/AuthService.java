@@ -5,4 +5,6 @@ import com.example.demo.dtos.LoginDto;
 public interface AuthService {
 
     String login(LoginDto loginDto);
+
+    boolean isTokenValid(String token);
 }

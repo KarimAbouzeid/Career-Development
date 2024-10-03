@@ -46,7 +46,10 @@ public class AuthServiceImpl implements AuthService{
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+    }
 
-
+    @Override
+    public boolean isTokenValid(String token){
+         return jwtTokenProvider.validateToken(token);
     }
 }
