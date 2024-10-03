@@ -16,6 +16,8 @@ public class UsersDTO {
     private String password;
     private String phone;
 
+    private boolean isFrozen;
+
     private UUID managerId;
     private UUID titleId;
 }

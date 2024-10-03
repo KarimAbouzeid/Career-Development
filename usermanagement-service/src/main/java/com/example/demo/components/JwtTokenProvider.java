@@ -32,7 +32,7 @@ public class JwtTokenProvider   {
         return token;
     }
 
-    private Key key(){
+    private Key key(){ // used to sign and verify JWT tokens
         return Keys.hmacShaKeyFor(secretkey.getBytes(StandardCharsets.UTF_8));
 
     }

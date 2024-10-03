@@ -35,6 +35,7 @@ public class Users {
     @JoinColumn(name="title_id", nullable = true)
     private Titles titleId;
 
+    private boolean isFrozen;
 
 
     @ManyToMany(fetch = FetchType.EAGER)

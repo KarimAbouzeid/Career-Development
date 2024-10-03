@@ -1,6 +1,5 @@
 package com.example.demo.configurations;
 
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -16,17 +15,14 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .components(new Components()
-                        .addSecuritySchemes("apiKey", new SecurityScheme()
-                                .type(SecurityScheme.Type.APIKEY)
-                                .in(SecurityScheme.In.HEADER)
-                                .name("Authorization")
+                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
                                 .description("JWT Authorization header using the Bearer scheme")
                         )
                 )
-                .addSecurityItem(new SecurityRequirement().addList("apiKey"))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .info(new Info().title("My API").version("1.0"));
     }
-
-
-
 }
