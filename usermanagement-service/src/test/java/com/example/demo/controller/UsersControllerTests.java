@@ -422,4 +422,71 @@ public class UsersControllerTests {
         verify(usersServices, times(1)).assignManager(userEmail, managerEmail);
     }
 
+
+    @Test
+    public void assignTitleByEmail_success_ReturnsSuccessMessage() throws Exception {
+        String userEmail = "user@example.com";
+        UUID titleId = UUID.randomUUID();
+        doNothing().when(usersServices).assignTitleByEmail(userEmail, titleId);
+
+        mockMvc.perform(put("/api/users/assignTitle")
+                        .param("email", userEmail)
+                        .param("titleId", titleId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Title assigned successfully"));
+
+        verify(usersServices, times(1)).assignTitleByEmail(userEmail, titleId);
+    }
+
+    @Test
+    public void assignTitleByEmail_userNotExists_ReturnsNotFound() throws Exception {
+        String userEmail = "user@example.com";
+        UUID titleId = UUID.randomUUID();
+        doThrow(new EntityNotFoundException("User not found with email: " + userEmail))
+                .when(usersServices).assignTitleByEmail(userEmail, titleId);
+
+        mockMvc.perform(put("/api/users/assignTitle")
+                        .param("email", userEmail)
+                        .param("titleId", titleId.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with email: " + userEmail));
+
+        verify(usersServices, times(1)).assignTitleByEmail(userEmail, titleId);
+    }
+
+    @Test
+    public void assignTitleByEmail_titleNotExists_ReturnsNotFound() throws Exception {
+        String userEmail = "user@example.com";
+        UUID titleId = UUID.randomUUID();
+        doThrow(new EntityNotFoundException("Title not found with ID: " + titleId))
+                .when(usersServices).assignTitleByEmail(userEmail, titleId);
+
+        mockMvc.perform(put("/api/users/assignTitle")
+                        .param("email", userEmail)
+                        .param("titleId", titleId.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Title not found with ID: " + titleId));
+
+        verify(usersServices, times(1)).assignTitleByEmail(userEmail, titleId);
+    }
+
+    @Test
+    public void assignTitleByEmail_unexpectedError_ReturnsInternalServerError() throws Exception {
+        String userEmail = "user@example.com";
+        UUID titleId = UUID.randomUUID();
+        doThrow(new RuntimeException())
+                .when(usersServices).assignTitleByEmail(userEmail, titleId);
+
+        mockMvc.perform(put("/api/users/assignTitle")
+                        .param("email", userEmail)
+                        .param("titleId", titleId.toString()))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("An error occurred. Please try again later."));
+
+        verify(usersServices, times(1)).assignTitleByEmail(userEmail, titleId);
+    }
+
+
+
+
 }

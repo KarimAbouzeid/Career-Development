@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -181,5 +183,54 @@ public class TitlesControllerTests {
         mockMvc.perform(delete("/api/titles/{id}", titleId))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("An error occurred. Please try again later."));
+    }
+
+    @Test
+    public void getTitlesByDepartment_success_ReturnsTitlesList() throws Exception {
+        UUID departmentId = UUID.randomUUID();
+        List<TitlesDTO> titles = new ArrayList<>();
+        titles.add(new TitlesDTO("Software Engineer", false, departmentId));
+        titles.add(new TitlesDTO("Project Manager", true, departmentId));
+
+        when(titlesServices.getTitlesByDepartment(departmentId)).thenReturn(titles);
+
+        mockMvc.perform(get("/api/titles/getByDepartment/{id}", departmentId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[{\"title\":\"Software Engineer\",\"isManager\":false,\"departmentId\":\"" + departmentId + "\"}," +
+                        "{\"title\":\"Project Manager\",\"isManager\":true,\"departmentId\":\"" + departmentId + "\"}]"));
+
+        verify(titlesServices, times(1)).getTitlesByDepartment(departmentId);
+    }
+
+    @Test
+    public void getTitlesByDepartment_departmentNotFound_ReturnsNotFound() throws Exception {
+
+        UUID departmentId = UUID.randomUUID();
+
+        when(titlesServices.getTitlesByDepartment(departmentId))
+                .thenThrow(new EntityNotFoundException("Department with id " + departmentId + " not found"));
+
+        mockMvc.perform(get("/api/titles/getByDepartment/{id}", departmentId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Department with id " + departmentId + " not found"));
+
+        verify(titlesServices, times(1)).getTitlesByDepartment(departmentId);
+    }
+
+    @Test
+    public void getTitlesByDepartment_noTitlesFound_ReturnsEmptyList() throws Exception {
+        UUID departmentId = UUID.randomUUID();
+        List<TitlesDTO> emptyList = new ArrayList<>();
+
+        when(titlesServices.getTitlesByDepartment(departmentId)).thenReturn(emptyList);
+
+        mockMvc.perform(get("/api/titles/getByDepartment/{id}", departmentId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(titlesServices, times(1)).getTitlesByDepartment(departmentId);
     }
 }

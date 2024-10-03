@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -178,6 +180,23 @@ public class DepartmentsControllerTests {
         mockMvc.perform(delete("/api/departments/{id}", departmentId))
                 .andExpect(status().isInternalServerError())
                .andExpect(content().string("An error occurred. Please try again later."));
+    }
+
+    @Test
+    public void getAllDepartments_returnsDepartmentsList() throws Exception {
+        DepartmentsDTO departmentsDTO1 = new DepartmentsDTO("Software Engineering");
+        DepartmentsDTO departmentsDTO2 = new DepartmentsDTO("Quality Assurance");
+        List<DepartmentsDTO> departmentsList = Arrays.asList(departmentsDTO1, departmentsDTO2);
+
+        when(departmentsServices.getAllDepartments()).thenReturn(departmentsList);
+
+        mockMvc.perform(get("/api/departments")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Software Engineering"))
+                .andExpect(jsonPath("$[1].name").value("Quality Assurance"));
+
+        verify(departmentsServices, times(1)).getAllDepartments();
     }
 
 }

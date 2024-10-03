@@ -8,7 +8,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartmentsServices {
@@ -49,6 +51,15 @@ public class DepartmentsServices {
         else
             throw new EntityNotFoundException("Department with id " + id + " does not exist.");
     }
+
+
+    public List<DepartmentsDTO> getAllDepartments() {
+        List<Departments> departments = departmentsRepository.findAll();
+        return departments.stream()
+                .map(departmentsMapper::toDepartmentsDTO)
+                .collect(Collectors.toList());
+    }
+
 
 
 

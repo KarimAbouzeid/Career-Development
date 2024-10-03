@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -47,5 +48,11 @@ public class DepartmentsController {
             departmentsServices.deleteDepartment(id);
         return ResponseEntity.ok("Department deleted successfully");
 
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DepartmentsDTO>> getAllDepartments() {
+        List<DepartmentsDTO> departments = departmentsServices.getAllDepartments();
+        return ResponseEntity.ok(departments);
     }
 }

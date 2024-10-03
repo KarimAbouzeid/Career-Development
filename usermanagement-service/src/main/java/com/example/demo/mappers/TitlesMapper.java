@@ -9,7 +9,7 @@ import org.mapstruct.*;
 public interface TitlesMapper {
 
 
-    @Mapping(target = "departmentId", ignore = true)
+    @Mapping(target = "departmentId", source = "departmentId.id")
     TitlesDTO toTitlesDTO(Titles titles);
 
     @Mapping(target = "id", ignore = true)
