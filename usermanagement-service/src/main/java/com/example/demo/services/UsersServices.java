@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 
 import com.example.demo.dtos.TitlesDTO;
+import com.example.demo.dtos.UserScoresDTO;
 import com.example.demo.dtos.UsersDTO;
 import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.entities.Role;
@@ -16,10 +17,12 @@ import exceptions.InvalidCredentialsException;
 import exceptions.UserAlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -35,8 +38,13 @@ public class UsersServices {
     private final TitlesServices titlesServices;
 
 
+    private final RestTemplate restTemplate;
+
+    @Value("${userScoresService.url}")
+    private String userScoresServiceUrl;
+
     @Autowired
-    public UsersServices(UsersRepository usersRepository, TitlesMapper titlesMapper, UsersMapper usersMapper, TitlesRepository titlesRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, TitlesServices titlesServices) {
+    public UsersServices(UsersRepository usersRepository, TitlesMapper titlesMapper, UsersMapper usersMapper, TitlesRepository titlesRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, TitlesServices titlesServices, RestTemplate restTemplate) {
         this.usersRepository = usersRepository;
         this.titlesMapper = titlesMapper;
         this.usersMapper = usersMapper;
@@ -44,6 +52,7 @@ public class UsersServices {
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.titlesServices = titlesServices;
+        this.restTemplate = restTemplate;
     }
 
     public UsersDTO getUser(UUID id) {
@@ -83,10 +92,13 @@ public class UsersServices {
         usersDTO.setPassword(passwordEncoder.encode(usersDTO.getPassword()));
         Users user = usersMapper.toUsers(usersDTO);
         user.setRoles(Collections.singleton(userRole));
-        usersRepository.save(user);
+        Users savedUser = usersRepository.save(user);
 
-        return usersMapper.toUsersSignupDTO(user);
+        addUserScoreInLearnings(savedUser.getId());
+
+        return usersMapper.toUsersSignupDTO(savedUser);
     }
+
 
 
     public UsersDTO addUser(UsersDTO usersDTO) {
@@ -99,12 +111,23 @@ public class UsersServices {
         Titles title = (Titles) managerAndTitle.get("title");
 
         Users user = usersMapper.toUsers(usersDTO);
-
         user.setManager(manager);
         user.setTitleId(title);
 
-        usersRepository.save(user);
-        return usersMapper.toUsersDTO(user);
+        Users savedUser = usersRepository.save(user);
+
+        addUserScoreInLearnings(savedUser.getId());
+
+        return usersMapper.toUsersDTO(savedUser);
+    }
+
+    private void addUserScoreInLearnings(UUID userId) {
+        UserScoresDTO userScoresDTO = new UserScoresDTO();
+        userScoresDTO.setUserId(userId);
+        userScoresDTO.setScore(0); // Initial score of 0
+
+        String url = userScoresServiceUrl + "/add";
+        restTemplate.postForObject(url, userScoresDTO, UserScoresDTO.class);
     }
 
     public UsersDTO updateUsers( UsersDTO usersUpdateDTO) {
@@ -130,11 +153,18 @@ public class UsersServices {
 
     public void deleteUser(UUID id) {
         if (usersRepository.existsById(id)) {
+            deleteScoreUserInLearnings(id);
             usersRepository.deleteById(id);
         } else {
             throw new EntityNotFoundException("User with id " + id + " does not exist.");
         }
     }
+
+    private void deleteScoreUserInLearnings(UUID userId) {
+        String url = userScoresServiceUrl + "/deleteUserScore/" + userId;
+        restTemplate.delete(url);
+    }
+
 
 
     public Page<UsersDTO> getAllUsers(Pageable pageable) {

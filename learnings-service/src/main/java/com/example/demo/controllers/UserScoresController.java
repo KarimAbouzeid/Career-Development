@@ -30,7 +30,7 @@ public class UserScoresController {
         return new ResponseEntity<>(userScore, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<UserScoresDTO> addUserScore( @RequestBody UserScoresDTO userScoresDTO) {
         UserScoresDTO createdUserScore = userScoresService.addUserScore( userScoresDTO);
         return new ResponseEntity<>(createdUserScore, HttpStatus.CREATED);
