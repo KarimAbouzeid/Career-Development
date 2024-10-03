@@ -5,6 +5,7 @@ import com.example.demo.entities.Users;
 import com.example.demo.services.UsersServices;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
         // Get JWT token from HTTP request
         String token = getTokenFromRequest(request);
 
+        if(!StringUtils.hasText(token)){
+            token = getTokenFromCookies(request);
+        }
 
         //Validate Token
         if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
@@ -74,11 +78,25 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
     // Extract the token
     private String getTokenFromRequest(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
+        System.out.println("Request: " + bearerToken);
+
 
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
             return bearerToken.substring(7, bearerToken.length());
         }
 
+        return null;
+    }
+
+    private String getTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
         return null;
     }
 }

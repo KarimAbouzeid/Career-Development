@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*",allowCredentials = "true")
 @RestController
 @RequestMapping("/api/scoreboardLevels")
 public class ScoreboardLevelsController {
@@ -29,14 +29,14 @@ public class ScoreboardLevelsController {
     }
 
     @PostMapping
-    public ResponseEntity<ScoreboardLevelsDTO> addDepartment(@RequestBody ScoreboardLevelsDTO scoreboardLevelsDTO) {
+    public ResponseEntity<ScoreboardLevelsDTO> addScoreboardLevel(@RequestBody ScoreboardLevelsDTO scoreboardLevelsDTO) {
 
         ScoreboardLevelsDTO returnedScoreboardLevelsDTO = scoreboardLevelsService.addScoreboardLevel(scoreboardLevelsDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnedScoreboardLevelsDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ScoreboardLevelsDTO> updateDepartment(@PathVariable UUID id, @RequestBody ScoreboardLevelsDTO scoreboardLevelsDTO) {
+    public ResponseEntity<ScoreboardLevelsDTO> updateScoreboardLevel(@PathVariable UUID id, @RequestBody ScoreboardLevelsDTO scoreboardLevelsDTO) {
 
         ScoreboardLevelsDTO returnedScoreboardLevelsDTO = scoreboardLevelsService.updateScoreboardLevel(id, scoreboardLevelsDTO);
         return ResponseEntity.ok(returnedScoreboardLevelsDTO);
@@ -44,7 +44,7 @@ public class ScoreboardLevelsController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDepartment(@PathVariable UUID id) {
+    public ResponseEntity<String> deleteScoreboardLevel(@PathVariable UUID id) {
         scoreboardLevelsService.deletescoreboardLevel(id);
         return ResponseEntity.ok("ScoreboardLevel deleted successfully");
 

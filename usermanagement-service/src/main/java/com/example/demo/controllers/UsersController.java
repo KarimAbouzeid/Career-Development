@@ -60,6 +60,7 @@ public class UsersController {
     public ResponseEntity<Page<UsersDTO>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+
         Pageable pageable = PageRequest.of(page, size);
         Page<UsersDTO> usersDTOS = usersServices.getAllUsers(pageable);
         return ResponseEntity.ok(usersDTOS);
@@ -73,6 +74,7 @@ public class UsersController {
 
     @PostMapping("/signUp")
     public ResponseEntity<UsersSignUpDTO> signUp(@RequestBody UsersSignUpDTO usersDTO) {
+        System.out.println("HEREEEE");
         UsersSignUpDTO createdUser = usersServices.signUp(usersDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
