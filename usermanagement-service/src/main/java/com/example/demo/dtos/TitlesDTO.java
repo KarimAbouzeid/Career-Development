@@ -8,6 +8,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class TitlesDTO {
+    private UUID id;
 
     private String title;
     private Boolean isManager;

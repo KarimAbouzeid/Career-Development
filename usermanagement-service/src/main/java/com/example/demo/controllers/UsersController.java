@@ -122,6 +122,11 @@ public class UsersController {
         return ResponseEntity.ok("Title assigned successfully");
     }
 
+    @PutMapping("/assignRole")
+    public ResponseEntity<String> assignRoleByEmail(@RequestParam String email, @RequestParam Long roleId) {
+            usersServices.assignRoleByEmail(email, roleId);
+            return ResponseEntity.ok("Role assigned successfully");
+    }
 
 
 }

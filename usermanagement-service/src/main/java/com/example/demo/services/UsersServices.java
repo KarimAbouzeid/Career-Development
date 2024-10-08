@@ -259,5 +259,16 @@ public class UsersServices {
     }
 
 
+    public void assignRoleByEmail(String userEmail, Long roleId) {
+        Users user = usersRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        user.getRoles().add(role);
+
+        usersRepository.save(user);
+    }
 }
 
