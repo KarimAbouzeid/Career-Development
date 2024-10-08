@@ -21,30 +21,24 @@ public class AuthController {
 
     private AuthService authService;
 
-
-    @GetMapping("/hello")
-    public ResponseEntity<String> helloWorld(){
-        return new ResponseEntity<>("Hello World", HttpStatus.OK);
-    }
     // Build Login REST API
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
 
 
         //01 - Receive the token from AuthService
-        String token = authService.login(loginDto);
+        AuthResponseDto authResponseDto = authService.login(loginDto);
 
+
+
+        //02 - Set the token as a response using JwtAuthResponse Dto class
+        String token = authResponseDto.getAccessToken();
 
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
                 .httpOnly(true)
                 .maxAge(36000)
                 .path("/")
                 .build();
-
-
-        //02 - Set the token as a response using JwtAuthResponse Dto class
-        AuthResponseDto authResponseDto = new AuthResponseDto();
-        authResponseDto.setAccessToken(token);
 
         //03 - Return the response to the user
         return  ResponseEntity.ok()

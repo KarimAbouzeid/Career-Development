@@ -19,12 +19,12 @@ public class JwtTokenProvider   {
 
     public String generateToken(Authentication authentication){
 
-        String username = authentication.getName();
+        String email = authentication.getName();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
 
         String token = Jwts.builder()
-                .subject(username)
+                .subject(email)
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .signWith(key())
