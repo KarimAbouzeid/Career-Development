@@ -11,21 +11,18 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name="scoreboard_levels")
-public class ScoreboardLevels {
+@Table(name = "boosters")
+public class Boosters {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String levelName;
+    private String name;
 
-    private int minScore;
+    private String type;
 
-    public ScoreboardLevels(String levelName, int minScore){
-        this.levelName = levelName;
-        this.minScore = minScore;
+    private int value;
 
-    }
-
+    private boolean isActive; // Field to mark if the booster is active
 }
