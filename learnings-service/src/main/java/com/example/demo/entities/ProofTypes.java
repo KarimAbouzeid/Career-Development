@@ -11,10 +11,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name="user_scores")
-public class UserScores {
-    @Id
-    private UUID userId;
+@Table(name = "proof_types")
+public class ProofTypes {
 
-    private int score;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    private String name;
+
 }

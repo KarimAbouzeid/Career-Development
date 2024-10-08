@@ -42,6 +42,12 @@ public class UserScoresController {
         return new ResponseEntity<>(updatedUserScore, HttpStatus.OK);
     }
 
+    @PutMapping("/calculate/{userId}")
+    public ResponseEntity<String> calculateUserScore(@PathVariable UUID userId) {
+        String responseMessage = userScoresService.calculateUserScore(userId);
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUserScore(@PathVariable UUID id) {
         userScoresService.deleteUserScore(id);

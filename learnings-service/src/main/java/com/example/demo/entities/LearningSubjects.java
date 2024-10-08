@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import com.example.demo.enums.SubjectType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,21 +12,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name="scoreboard_levels")
-public class ScoreboardLevels {
+@Table(name = "learning_subjects")
+public class LearningSubjects {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String levelName;
+    @Enumerated(EnumType.STRING)
+    private SubjectType type;
 
-    private int minScore;
-
-    public ScoreboardLevels(String levelName, int minScore){
-        this.levelName = levelName;
-        this.minScore = minScore;
-
-    }
+    private String subject;
 
 }
