@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = {"Content-Type", "Accept", "X-Requested-With"}, allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/userScores")
 public class UserScoresController {
@@ -26,12 +26,11 @@ public class UserScoresController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserScoresDTO> getUserScore(@PathVariable UUID id) {
-        System.out.println("HERE");
         UserScoresDTO userScore = userScoresService.getUserScore(id);
         return new ResponseEntity<>(userScore, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<UserScoresDTO> addUserScore( @RequestBody UserScoresDTO userScoresDTO) {
         UserScoresDTO createdUserScore = userScoresService.addUserScore( userScoresDTO);
         return new ResponseEntity<>(createdUserScore, HttpStatus.CREATED);
@@ -54,7 +53,6 @@ public class UserScoresController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-
         Pageable pageable = PageRequest.of(page, size);
         Page<UserScoresDTO> userScores = userScoresService.getAllUserScores(pageable);
         return new ResponseEntity<>(userScores, HttpStatus.OK);

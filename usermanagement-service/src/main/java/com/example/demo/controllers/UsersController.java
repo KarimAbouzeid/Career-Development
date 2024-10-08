@@ -84,16 +84,16 @@ public class UsersController {
         UsersDTO createdUser = usersServices.addUser(usersDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/freeze")
     public ResponseEntity<String> freezeUser(@RequestParam String email) {
-        UsersDTO frozenUser = usersServices.freezeUserByEmail(email);
+        usersServices.freezeUserByEmail(email);
         return ResponseEntity.ok("User with email " + email + " has been frozen.");
     }
 
     @PutMapping("/unfreeze")
     public ResponseEntity<String> unfreezeUser(@RequestParam String email) {
-        UsersDTO unfrozenUser = usersServices.unfreezeUserByEmail(email);
+        usersServices.unfreezeUserByEmail(email);
         return ResponseEntity.ok("User with email " + email + " has been unfrozen.");
     }
 
