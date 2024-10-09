@@ -18,6 +18,8 @@ public class Learnings {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    private String Title;
+
     @ManyToOne
     @JoinColumn(name = "type_id", nullable = false)
     private LearningTypes learningType;

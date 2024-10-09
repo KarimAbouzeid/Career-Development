@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/learnings")
 public class LearningsController {
@@ -24,6 +25,7 @@ public class LearningsController {
     @GetMapping
     public ResponseEntity<List<LearningsDTO>> getAllLearnings() {
         List<LearningsDTO> learnings = learningsService.getAllLearnings();
+        System.out.println(learnings);
         return new ResponseEntity<>(learnings, HttpStatus.OK);
     }
 
