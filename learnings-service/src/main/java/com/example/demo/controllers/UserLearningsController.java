@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dtos.SubmitUserLearningDTO;
+import com.example.demo.dtos.UserLearningResponseDTO;
 import com.example.demo.dtos.UserLearningsDTO;
 import com.example.demo.services.UserLearningsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/userLearnings")
 public class UserLearningsController {
@@ -31,6 +33,12 @@ public class UserLearningsController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<UserLearningsDTO>> getSubmittedLearningsByUser(@PathVariable UUID userId) {
         List<UserLearningsDTO> submittedLearnings = userLearningsService.getSubmittedLearningsByUser(userId);
+        return new ResponseEntity<>(submittedLearnings, HttpStatus.OK);
+    }
+
+    @GetMapping("/submittedLearnings/{userId}")
+    public ResponseEntity<List<UserLearningResponseDTO>> getSubmittedLearningsDetails(@PathVariable UUID userId) {
+        List<UserLearningResponseDTO> submittedLearnings = userLearningsService.getSubmittedLearningsDetails(userId);
         return new ResponseEntity<>(submittedLearnings, HttpStatus.OK);
     }
 

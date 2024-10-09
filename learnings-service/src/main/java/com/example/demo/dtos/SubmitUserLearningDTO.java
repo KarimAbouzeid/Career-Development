@@ -17,6 +17,7 @@ public class SubmitUserLearningDTO {
     private UUID proofTypeId;
     private UUID activeBoosterId; // Optional
 
+    private String Title;
     private UUID learningTypeId; // Optional if existing learning
     private String URL;
     private String description;

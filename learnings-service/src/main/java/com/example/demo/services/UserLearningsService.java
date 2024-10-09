@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.dtos.SubmitUserLearningDTO;
+import com.example.demo.dtos.UserLearningResponseDTO;
 import com.example.demo.dtos.UserLearningsDTO;
 import com.example.demo.entities.*;
 import com.example.demo.enums.ApprovalStatus;
@@ -49,6 +50,7 @@ public class UserLearningsService {
         } else {
             // Create a new Learning entity if not provided
             Learnings newLearning = new Learnings();
+            newLearning.setTitle(dto.getTitle());
             newLearning.setLearningType(findLearningTypeById(dto.getLearningTypeId()));
             newLearning.setURL(dto.getURL());
             newLearning.setDescription(dto.getDescription());
@@ -104,6 +106,25 @@ public class UserLearningsService {
         return submittedLearnings.stream()
                 .map(userLearningsMapper::toUserLearningsDTO)
                 .collect(Collectors.toList());
+    }
+
+
+
+    public List<UserLearningResponseDTO> getSubmittedLearningsDetails(UUID userId) {
+        List<UserLearnings> userLearningsList = userLearningsRepository.findByUserId(userId);
+
+        // Map to DTO
+        return userLearningsList.stream().map(userLearning -> new UserLearningResponseDTO(
+                userLearning.getLearning().getTitle(),
+                userLearning.getLearning().getURL(),
+                userLearning.getProof(),
+                userLearning.getProofType().getName(),
+                userLearning.getDate(),
+                userLearning.getApprovalStatus(),
+                userLearning.getComment(),
+                userLearning.getLearning().getLengthInHours(),
+                userLearning.getLearning().getLearningType().getBaseScore() // Accessing base score
+        )).collect(Collectors.toList());
     }
 
     public UserLearningsDTO getSubmittedLearningById(UUID id) {

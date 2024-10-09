@@ -7,13 +7,15 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface LearningsMapper {
 
+    @Mapping(source = "learningType.id", target = "learningTypeId")
+    @Mapping(source = "learningSubject.id", target = "learningSubjectId")
     LearningsDTO toLearningsDTO(Learnings learnings);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "learningType.id", source = "learningTypeId")
-    @Mapping(target = "learningSubject.id", source = "learningSubjectId")
+    @Mapping(source = "learningTypeId", target = "learningType.id")
+    @Mapping(source = "learningSubjectId", target = "learningSubject.id")
     Learnings toLearnings(LearningsDTO learningsDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateLearningsFromDTO(LearningsDTO learningsDTO, @MappingTarget Learnings entity);
+
 }

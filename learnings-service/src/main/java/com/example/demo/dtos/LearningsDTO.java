@@ -11,9 +11,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class LearningsDTO {
     private UUID id;
-    private UUID learningTypeId;
+    private String title;
     private String URL;
     private String description;
-    private UUID learningSubjectId;
     private float lengthInHours;
+    private UUID learningTypeId; // assuming you want to include the ID of the learning type
+    private UUID learningSubjectId; // assuming you want to include the ID of the learning subject
 }
