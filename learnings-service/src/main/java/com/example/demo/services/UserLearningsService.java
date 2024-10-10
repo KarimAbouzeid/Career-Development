@@ -115,6 +115,7 @@ public class UserLearningsService {
 
         // Map to DTO
         return userLearningsList.stream().map(userLearning -> new UserLearningResponseDTO(
+                userLearning.getId(),
                 userLearning.getLearning().getTitle(),
                 userLearning.getLearning().getURL(),
                 userLearning.getProof(),
@@ -140,6 +141,16 @@ public class UserLearningsService {
                 .orElseThrow(() -> new EntityNotFoundException("User learning not found with id " + id));
 
         userLearning.setApprovalStatus(ApprovalStatus.valueOf(newStatus));
+        userLearningsRepository.save(userLearning);
+
+        userLearningsMapper.toUserLearningsDTO(userLearning);
+    }
+
+    public void updateComment(UUID id, String comment) {
+        UserLearnings userLearning = userLearningsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User learning not found with id " + id));
+
+        userLearning.setComment(comment);
         userLearningsRepository.save(userLearning);
 
         userLearningsMapper.toUserLearningsDTO(userLearning);
