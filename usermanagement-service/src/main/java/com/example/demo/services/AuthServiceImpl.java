@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 
 @Service
 public class AuthServiceImpl implements AuthService{
@@ -23,6 +25,9 @@ public class AuthServiceImpl implements AuthService{
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private UsersServices usersServices;
 
 
     @Override
@@ -48,8 +53,11 @@ public class AuthServiceImpl implements AuthService{
             // 03 - Generate the token based on username and secret key
             String token = jwtTokenProvider.generateToken(authentication);
 
+            UUID userId = getUserId(loginDto.getEmail());
+
             authResponseDto.setAccessToken(token);
             authResponseDto.setIsAdmin(isAdmin(authentication));
+            authResponseDto.setUserId(userId);
 
             // 04 - Return the token to controller
             return authResponseDto;
@@ -71,6 +79,11 @@ public class AuthServiceImpl implements AuthService{
                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         }
         return false;
+    }
+
+    @Override
+    public UUID getUserId(String email) {
+        return usersServices.loadUserIdByEmail(email);
     }
 
 

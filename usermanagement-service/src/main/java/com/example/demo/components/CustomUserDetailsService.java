@@ -14,10 +14,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService, CustomUserIdService {
 
     @Autowired
     private UsersRepository usersRepository;
@@ -41,4 +42,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println(Arrays.toString(returnedUser.getAuthorities().toArray()));
         return returnedUser;
     }
+
+
 }
