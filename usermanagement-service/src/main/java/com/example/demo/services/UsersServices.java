@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -68,7 +69,12 @@ public class UsersServices {
 
         return usersMapper.toUsersDTO(user);
     }
+    public UUID loadUserIdByEmail(String email) throws UsernameNotFoundException {
+        Users user = usersRepository.findByEmail(email) .orElseThrow(() ->
+                new UsernameNotFoundException("User not exists by Username or Email"));
 
+        return user.getId();
+    }
     public UsersDTO login(String email, String password) {
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found"));
