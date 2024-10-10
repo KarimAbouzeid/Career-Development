@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dtos.LearningsDTO;
+import com.example.demo.entities.Learnings;
 import com.example.demo.services.LearningsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,4 +47,11 @@ public class LearningsController {
         learningsService.updateLearning(id, learningsDTO);
         return new ResponseEntity<>("Learning updated successfully", HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteLearning(@PathVariable UUID id) {
+        learningsService.deleteLearning(id);
+        return new ResponseEntity<>("Learning deleted successfully", HttpStatus.OK);
+        }
+
 }

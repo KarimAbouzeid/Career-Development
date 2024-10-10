@@ -10,7 +10,6 @@ public interface ScoreboardLevelsMapper {
 
     ScoreboardLevelsDTO toScoreboardLevelsDTO(ScoreboardLevels scoreboardLevels);
 
-    @Mapping(target = "id", ignore = true)
     ScoreboardLevels toScoreboardLevels(ScoreboardLevelsDTO scoreboardLevelsDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

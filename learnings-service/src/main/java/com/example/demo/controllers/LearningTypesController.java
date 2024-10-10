@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.dtos.LearningTypesDTO;
 import com.example.demo.dtos.LearningsDTO;
+import com.example.demo.dtos.ScoreboardLevelsDTO;
 import com.example.demo.services.LearningTypesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,27 @@ public class LearningTypesController {
     public ResponseEntity<LearningTypesDTO> getLearningTypeById(@PathVariable UUID id) {
         LearningTypesDTO learningTypeDTO = learningTypesService.getLearningTypeById(id);
         return new ResponseEntity<>(learningTypeDTO, HttpStatus.OK);
+    }
+
+
+    @PostMapping
+    public ResponseEntity<String> addLearningType(@RequestBody LearningTypesDTO learningTypesDTO) {
+
+        learningTypesService.addLearningType(learningTypesDTO);
+        return ResponseEntity.ok("learning type added successfully");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateLearningTypes(@PathVariable UUID id, @RequestBody LearningTypesDTO learningTypesDTO) {
+
+        learningTypesService.updateLearningType(id, learningTypesDTO);
+        return ResponseEntity.ok("learning type updated successfully");
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteLearningType(@PathVariable UUID id) {
+        learningTypesService.deleteLearningType(id);
+        return ResponseEntity.ok("Learning type deleted successfully");
     }
 }
