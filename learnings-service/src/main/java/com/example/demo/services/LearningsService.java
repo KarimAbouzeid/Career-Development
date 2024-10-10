@@ -8,6 +8,7 @@ import com.example.demo.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,13 +18,16 @@ import java.util.stream.Collectors;
 public class LearningsService {
 
     private final LearningsRepository learningsRepository;
+    private final UserLearningsRepository userLearningsRepository;
+
     private final LearningsMapper learningsMapper;
 
     @Autowired
-    public LearningsService(LearningsMapper learningsMapper, LearningsRepository learningsRepository) {
+    public LearningsService(LearningsMapper learningsMapper, LearningsRepository learningsRepository, UserLearningsRepository userLearningsRepository) {
         this.learningsMapper = learningsMapper;
         this.learningsRepository = learningsRepository;
 
+        this.userLearningsRepository = userLearningsRepository;
     }
 
     public List<LearningsDTO> getAllLearnings() {
@@ -58,4 +62,17 @@ public class LearningsService {
         learningsRepository.save(learning);
         learningsMapper.toLearningsDTO(learning);
     }
+
+    //for admin
+    @Transactional
+    public void deleteLearning(UUID id) {
+        if (learningsRepository.existsById(id)) {
+            userLearningsRepository.deleteByLearning_Id(id);
+            learningsRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("Learning with id " + id  + " does not exist.");
+
+        }
+    }
+
 }

@@ -2,10 +2,13 @@ package com.example.demo.services;
 
 import com.example.demo.dtos.LearningTypesDTO;
 import com.example.demo.dtos.LearningsDTO;
+import com.example.demo.dtos.LearningTypesDTO;
 import com.example.demo.entities.LearningTypes;
 import com.example.demo.entities.Learnings;
+import com.example.demo.entities.LearningTypes;
 import com.example.demo.mappers.LearningTypesMapper; // Assuming you have a mapper for DTOs
 import com.example.demo.repositories.LearningTypesRepository;
+import com.example.demo.repositories.LearningsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +21,14 @@ import java.util.stream.Collectors;
 public class LearningTypesService {
 
     private final LearningTypesRepository learningTypesRepository;
+    private final LearningsRepository learningsRepository;
+
     private final LearningTypesMapper learningTypesMapper; // Mapper for conversion
 
     @Autowired
-    public LearningTypesService(LearningTypesRepository learningTypesRepository, LearningTypesMapper learningTypesMapper) {
+    public LearningTypesService(LearningTypesRepository learningTypesRepository, LearningsRepository learningsRepository, LearningTypesMapper learningTypesMapper) {
         this.learningTypesRepository = learningTypesRepository;
+        this.learningsRepository = learningsRepository;
         this.learningTypesMapper = learningTypesMapper;
     }
 
@@ -38,4 +44,35 @@ public class LearningTypesService {
                 .map(learningTypesMapper::toLearningTypesDTO)
                 .collect(Collectors.toList());
     }
+
+
+
+    public LearningTypesDTO addLearningType(LearningTypesDTO learningTypesDTO) {
+        LearningTypes learningTypes = learningTypesMapper.toLearningTypes(learningTypesDTO);
+        learningTypesRepository.save(learningTypes);
+        return learningTypesMapper.toLearningTypesDTO(learningTypes);
+    }
+
+    public LearningTypesDTO updateLearningType(UUID id, LearningTypesDTO LearningTypesUpdateDTO) {
+
+        LearningTypes scoreboardLevel = learningTypesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ScoreboardLevel not found with ID: " + id));
+
+        learningTypesMapper.updateLearningTypesFromDTO(LearningTypesUpdateDTO,scoreboardLevel);
+
+        learningTypesRepository.save(scoreboardLevel);
+        return learningTypesMapper.toLearningTypesDTO(scoreboardLevel);
+    }
+
+    public void deleteLearningType(UUID id) {
+        if (learningTypesRepository.existsById(id)) {
+            learningsRepository.deleteBylearningTypeId(id);
+            learningTypesRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("ScoreboardLevel with id " + id + " does not exist.");
+        }
+    }
+
+
+
 }
