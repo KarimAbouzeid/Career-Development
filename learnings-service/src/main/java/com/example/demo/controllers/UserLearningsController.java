@@ -53,4 +53,10 @@ public class UserLearningsController {
         userLearningsService.updateApprovalStatus(id, newStatus);
         return new ResponseEntity<>("Approval status updated successfully", HttpStatus.OK);
     }
+
+    @PutMapping("/updateComment/{id}")
+    public ResponseEntity<String> updateComment(@PathVariable UUID id, @RequestBody String comment) {
+        userLearningsService.updateComment(id, comment);
+        return new ResponseEntity<>("Comment updated successfully", HttpStatus.OK);
+    }
 }

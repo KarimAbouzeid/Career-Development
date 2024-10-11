@@ -12,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLearningResponseDTO {
+    private UUID id;
     private String Title;
     private String URL;
     private String proof;

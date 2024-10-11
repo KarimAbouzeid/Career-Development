@@ -57,6 +57,7 @@ public class AuthServiceImpl implements AuthService{
 
             authResponseDto.setAccessToken(token);
             authResponseDto.setIsAdmin(isAdmin(authentication));
+            authResponseDto.setIsManager(isManager(authentication));
             authResponseDto.setUserId(userId);
 
             // 04 - Return the token to controller
@@ -77,6 +78,15 @@ public class AuthServiceImpl implements AuthService{
         if (authentication != null) {
             return authentication.getAuthorities().stream()
                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isManager(Authentication authentication) {
+        if (authentication != null) {
+            return authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"));
         }
         return false;
     }

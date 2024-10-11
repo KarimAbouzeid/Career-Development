@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UsersServices {
@@ -276,5 +277,12 @@ public class UsersServices {
 
         usersRepository.save(user);
     }
+
+
+    public List<UsersDTO> getManagedUsers(UUID managerId) {
+        List<Users> managedUsers = usersRepository.findByManagerId(managerId);
+        return managedUsers.stream()
+                .map(usersMapper::toUsersDTO)
+                .collect(Collectors.toList());    }
 }
 

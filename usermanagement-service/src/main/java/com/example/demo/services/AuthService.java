@@ -14,5 +14,8 @@ public interface AuthService {
 
     boolean isAdmin(Authentication authentication);
 
+    boolean isManager(Authentication authentication);
+
+
     UUID getUserId(String email);
 }
