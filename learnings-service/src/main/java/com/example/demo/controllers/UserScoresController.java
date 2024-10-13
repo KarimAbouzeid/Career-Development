@@ -43,9 +43,8 @@ public class UserScoresController {
     }
 
     @PutMapping("/calculate/{userId}")
-    public ResponseEntity<String> calculateUserScore(@PathVariable UUID userId) {
-        String responseMessage = userScoresService.calculateUserScore(userId);
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    public void calculateUserScore(@PathVariable UUID userId) {
+       userScoresService.calculateUserScore(userId);
     }
 
     @DeleteMapping("/{id}")

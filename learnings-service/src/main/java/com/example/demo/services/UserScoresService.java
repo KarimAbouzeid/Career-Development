@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -44,18 +43,20 @@ public class UserScoresService {
     }
 
 
-    public String calculateUserScore(UUID userId) {
-        // Calculate the total score based on UserLearnings
-        int totalScore = userLearningsRepository.findByUserId(userId).stream()
-                .mapToInt(userLearning -> userLearning.getLearning().getLearningType().getBaseScore())
-                .sum();
+    public void calculateUserScore(UUID userId) {
+        int totalScore = 0;
+        if (userLearningsRepository.existsByUserId(userId)) {
+            totalScore = userLearningsRepository.findByUserId(userId)
+                    .stream()
+                    .mapToInt(userLearning -> userLearning.getLearning().getLearningType().getBaseScore())
+                    .sum();
+        }
 
         UserScores userScores = usersScoresRepository.findById(userId)
                 .orElse(new UserScores(userId, 0));
         userScores.setScore(totalScore);
         usersScoresRepository.save(userScores);
 
-        return "User score updated successfully to " + totalScore;
     }
 
     public UserScoresDTO addUserScore(UserScoresDTO userScoresDTO) {

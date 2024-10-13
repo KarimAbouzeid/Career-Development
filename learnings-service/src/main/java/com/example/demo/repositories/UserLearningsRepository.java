@@ -19,4 +19,5 @@ public interface UserLearningsRepository extends JpaRepository<UserLearnings, UU
     void deleteByLearning_Id(@Param("learning_id") UUID learningId); // Note the underscore here
 
 
+    boolean existsByUserId(UUID userId);
 }
