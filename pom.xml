@@ -25,6 +25,7 @@
 		<module>usermanagement-service</module>
 		<module>shared</module>
         <module>learnings-service</module>
+        <module>articles-service</module>
     </modules>
 	<scm>
 		<connection/>
