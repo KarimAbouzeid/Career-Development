@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -89,9 +91,9 @@ public class ScoreboardLevelsControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"levelName\": \"Expert\"}")
                         .content("{\"minScore\": 100}"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.levelName").value("Expert"))
-                .andExpect(jsonPath("$.minScore").value(100));
+                .andExpect(status().isOk())
+        .andExpect(content().string("Scoreboard level added successfully"));
+
 
         verify(scoreboardLevelsService, times(1)).addScoreboardLevel(any(ScoreboardLevelsDTO.class));
     }
@@ -119,7 +121,8 @@ public class ScoreboardLevelsControllerTests {
                         .content("{\"levelName\": \"Professional\"}")
                         .content("{\"minScore\": 120}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.levelName").value("Expert"));
+                .andExpect(content().string("Scoreboard level updated successfully"));
+
 
         verify(scoreboardLevelsService, times(1)).updateScoreboardLevel(eq(scoreboardLevelId), any(ScoreboardLevelsDTO.class));
     }
@@ -190,5 +193,41 @@ public class ScoreboardLevelsControllerTests {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("An error occurred. Please try again later."));
     }
+
+    @Test
+    public void getAllScoreboardLevels_Success() throws Exception {
+        Pageable pageable = mock(Pageable.class);
+        Page<ScoreboardLevelsDTO> scoreboardLevelsPage = mock(Page.class);
+
+        when(scoreboardLevelsService.getAllScoreboardLevels(pageable)).thenReturn(scoreboardLevelsPage);
+
+        mockMvc.perform(get("/api/scoreboardLevels/all")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(scoreboardLevelsService, times(1)).getAllScoreboardLevels(any(Pageable.class));
+    }
+
+    @Test
+    public void getLevelByScore_Success() throws Exception {
+        int score = 150;
+        String levelName = "Expert";
+
+        when(scoreboardLevelsService.getLevelByScore(score)).thenReturn(levelName);
+
+        mockMvc.perform(get("/api/scoreboardLevels/level")
+                        .param("score", String.valueOf(score))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(levelName));
+
+        verify(scoreboardLevelsService, times(1)).getLevelByScore(score);
+    }
+
+
+
+
 
 }

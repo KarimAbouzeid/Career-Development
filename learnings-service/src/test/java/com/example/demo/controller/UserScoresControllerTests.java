@@ -80,7 +80,7 @@ public class UserScoresControllerTests {
     public void addUserScore_validInput_ReturnsCreated() throws Exception {
         when(userScoresService.addUserScore(any(UserScoresDTO.class))).thenReturn(userScoresDTO);
 
-        mockMvc.perform(post("/api/userScores")
+        mockMvc.perform(post("/api/userScores/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"score\": 100}"))
                 .andExpect(status().isCreated())
@@ -146,4 +146,29 @@ public class UserScoresControllerTests {
 
         verify(userScoresService, times(1)).getAllUserScores(pageable);
     }
+
+    @Test
+    public void calculateUserScore_validUserId_returnsOk() throws Exception {
+        UUID userId = UUID.randomUUID();
+
+        doNothing().when(userScoresService).calculateUserScore(userId);
+
+        mockMvc.perform(put("/api/userScores/calculate/{userId}", userId))
+                .andExpect(status().isOk());
+
+        verify(userScoresService, times(1)).calculateUserScore(userId);
+    }
+
+    @Test
+    public void calculateUserScore_userNotExists_returnsNotFound() throws Exception {
+        UUID userId = UUID.randomUUID();
+
+        doThrow(new EntityNotFoundException("User not found")).when(userScoresService).calculateUserScore(userId);
+
+        mockMvc.perform(put("/api/userScores/calculate/{userId}", userId))
+                .andExpect(status().isNotFound());
+
+        verify(userScoresService, times(1)).calculateUserScore(userId);
+    }
+
 }

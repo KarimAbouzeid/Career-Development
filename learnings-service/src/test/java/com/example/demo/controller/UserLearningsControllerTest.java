@@ -98,6 +98,22 @@ public class UserLearningsControllerTest {
     }
 
     @Test
+    public void testUpdateApprovalStatus_LearningNotFound_throwsException() throws Exception {
+        UUID learningId = UUID.randomUUID();
+        String newStatus = "Approved";
+
+        doThrow(new EntityNotFoundException("Learning not found with id " + learningId))
+                .when(userLearningsService).updateApprovalStatus(learningId, newStatus);
+
+        mockMvc.perform(put("/api/userLearnings/updateApprovalStatus/{id}", learningId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newStatus))
+                .andExpect(status().isNotFound());
+
+        verify(userLearningsService, times(1)).updateApprovalStatus(learningId, newStatus);
+    }
+
+    @Test
     public void testGetSubmittedLearningById_LearningNotFound_throwsException() throws Exception {
         UUID learningId = UUID.randomUUID();
 
@@ -110,4 +126,41 @@ public class UserLearningsControllerTest {
 
         verify(userLearningsService, times(1)).getSubmittedLearningById(learningId);
     }
+
+
+    @Test
+    public void testUpdateComment_Success() throws Exception {
+        UUID learningId = UUID.randomUUID();
+        String newComment = "This is an updated comment";
+
+        doNothing().when(userLearningsService).updateComment(learningId, newComment);
+
+        mockMvc.perform(put("/api/userLearnings/updateComment/{id}", learningId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newComment))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Comment updated successfully"));
+
+        verify(userLearningsService, times(1)).updateComment(learningId, newComment);
+    }
+
+    @Test
+    public void testUpdateComment_LearningNotFound_throwsException() throws Exception {
+        UUID learningId = UUID.randomUUID();
+        String newComment = "This is an updated comment";
+
+        doThrow(new EntityNotFoundException("Learning not found with id " + learningId))
+                .when(userLearningsService).updateComment(learningId, newComment);
+
+        mockMvc.perform(put("/api/userLearnings/updateComment/{id}", learningId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newComment))
+                .andExpect(status().isNotFound());
+
+        verify(userLearningsService, times(1)).updateComment(learningId, newComment);
+    }
+
+
+
+
 }
