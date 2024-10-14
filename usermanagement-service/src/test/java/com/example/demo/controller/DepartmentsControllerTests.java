@@ -4,7 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.controllers.DepartmentsController;
 import com.example.demo.dtos.DepartmentsDTO;
 import com.example.demo.services.DepartmentsServices;
-import exceptions.GlobalExceptionHandler;
+import com.example.demo.exceptions.GlobalExceptionHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

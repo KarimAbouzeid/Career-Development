@@ -12,7 +12,7 @@ import com.example.demo.dtos.UsersDTO;
 import com.example.demo.entities.Users;
 import com.example.demo.entities.Titles;
 
-import exceptions.UserAlreadyExistsException;
+import com.example.demo.exceptions.UserAlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -193,6 +193,7 @@ public class UsersServicesTests {
         when(roleRepository.findByName("USER")).thenReturn(Optional.of(new Role()));
         when(usersMapper.toUsers(any(UsersSignUpDTO.class))).thenReturn(user);
         when(usersMapper.toUsersSignupDTO(any(Users.class))).thenReturn(usersSignUpDTO);
+        when(usersRepository.save(any(Users.class))).thenReturn(user);
 
         // Act
         UsersSignUpDTO addedUser = usersServices.signUp(usersSignUpDTO);

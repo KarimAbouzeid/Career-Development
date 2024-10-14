@@ -1,4 +1,4 @@
-package com.example.demo.configurations;
+package com.example.demo.config;
 
 import com.example.demo.components.JwtAuthenticationEntryPoint;
 import com.example.demo.components.JwtAuthenticationFilter;
@@ -61,6 +61,7 @@ public class SecurityConfig  {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/**").permitAll();
                     auth.requestMatchers("/api/users/signUp").permitAll();
+                    auth.requestMatchers("/api/users/getManager/**").permitAll();
                     auth.requestMatchers(AUTH_WHITELIST).permitAll();
                     auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     auth.anyRequest().authenticated();

@@ -1,23 +1,18 @@
 package com.example.demo.controller;
 
 import com.example.demo.controllers.AuthController;
-import com.example.demo.controllers.UsersController;
 import com.example.demo.dtos.AuthResponseDto;
 import com.example.demo.dtos.LoginDto;
 import com.example.demo.services.AuthService;
-import exceptions.GlobalExceptionHandler;
-import exceptions.InvalidCredentialsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Objects;
 
@@ -45,8 +40,11 @@ public class AuthControllerTest {
 
     @Test
     public void login_ReturnsAuthResponseDto() {
+
+        AuthResponseDto authResponseDto = new AuthResponseDto();
+        authResponseDto.setAccessToken("mockToken");
         String mockToken = "mockToken";
-        when(authService.login(any(LoginDto.class))).thenReturn(mockToken);
+        when(authService.login(any(LoginDto.class))).thenReturn(authResponseDto);
 
         ResponseEntity<AuthResponseDto> response = authController.login(loginDto);
 

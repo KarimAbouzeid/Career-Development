@@ -4,7 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.controllers.ScoreboardLevelsController;
 import com.example.demo.dtos.ScoreboardLevelsDTO;
 import com.example.demo.services.ScoreboardLevelsService;
-import exceptions.GlobalExceptionHandler;
+import com.example.demo.exceptions.GlobalExceptionHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
