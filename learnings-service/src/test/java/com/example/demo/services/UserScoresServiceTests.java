@@ -1,8 +1,12 @@
 package com.example.demo.services;
 
 import com.example.demo.dtos.UserScoresDTO;
+import com.example.demo.entities.LearningTypes;
+import com.example.demo.entities.Learnings;
+import com.example.demo.entities.UserLearnings;
 import com.example.demo.entities.UserScores;
 import com.example.demo.mappers.UserScoresMapper;
+import com.example.demo.repositories.UserLearningsRepository;
 import com.example.demo.repositories.UserScoresRepository;
 import com.example.demo.services.UserScoresService;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,9 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,6 +32,9 @@ public class UserScoresServiceTests {
 
     @Mock
     private UserScoresRepository userScoresRepository;
+
+    @Mock
+    private UserLearningsRepository userLearningsRepository;
 
     @Mock
     private UserScoresMapper userScoresMapper;
@@ -157,4 +162,48 @@ public class UserScoresServiceTests {
 
         verify(userScoresRepository, times(1)).findAll(pageable);
     }
+
+
+    @Test
+    public void calculateUserScore_userLearningsExist_UpdatesUserScore() {
+        UUID userId = UUID.randomUUID();
+        UserScores userScores = new UserScores(userId, 0);
+        UserLearnings userLearning1 = new UserLearnings();
+        userLearning1.setLearning(new Learnings());
+        userLearning1.getLearning().setLearningType(new LearningTypes());
+        userLearning1.getLearning().getLearningType().setBaseScore(50);
+
+        UserLearnings userLearning2 = new UserLearnings();
+        userLearning2.setLearning(new Learnings());
+        userLearning2.getLearning().setLearningType(new LearningTypes());
+        userLearning2.getLearning().getLearningType().setBaseScore(100);
+
+        List<UserLearnings> userLearnings = Arrays.asList(userLearning1, userLearning2);
+
+        when(userLearningsRepository.existsByUserId(userId)).thenReturn(true);
+        when(userLearningsRepository.findByUserId(userId)).thenReturn(userLearnings);
+        when(userScoresRepository.findById(userId)).thenReturn(Optional.of(userScores));
+        when(userScoresRepository.save(any(UserScores.class))).thenReturn(userScores);
+
+        userScoresService.calculateUserScore(userId);
+
+        assertEquals(150, userScores.getScore());
+        verify(userScoresRepository, times(1)).save(userScores);
+    }
+
+    @Test
+    public void calculateUserScore_userLearningsDoNotExist_CreatesUserScore() {
+        UUID userId = UUID.randomUUID();
+        UserScores userScores = new UserScores(userId, 0);
+
+        when(userLearningsRepository.existsByUserId(userId)).thenReturn(false);
+        when(userScoresRepository.findById(userId)).thenReturn(Optional.empty());
+        when(userScoresRepository.save(any(UserScores.class))).thenReturn(userScores);
+
+        userScoresService.calculateUserScore(userId);
+
+        assertEquals(0, userScores.getScore());
+        verify(userScoresRepository, times(1)).save(userScores);
+    }
+
 }

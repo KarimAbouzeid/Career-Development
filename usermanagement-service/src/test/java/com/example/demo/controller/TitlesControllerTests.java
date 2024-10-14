@@ -189,8 +189,9 @@ public class TitlesControllerTests {
     public void getTitlesByDepartment_success_ReturnsTitlesList() throws Exception {
         UUID departmentId = UUID.randomUUID();
         List<TitlesDTO> titles = new ArrayList<>();
-        titles.add(new TitlesDTO("Software Engineer", false, departmentId));
-        titles.add(new TitlesDTO("Project Manager", true, departmentId));
+        UUID titleId = UUID.randomUUID();
+        titles.add(new TitlesDTO(titleId,"Software Engineer", false, departmentId));
+        titles.add(new TitlesDTO(titleId,"Project Manager", true, departmentId));
 
         when(titlesServices.getTitlesByDepartment(departmentId)).thenReturn(titles);
 

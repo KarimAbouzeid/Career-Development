@@ -41,6 +41,7 @@ public class AuthControllerTest {
     @Test
     public void login_ReturnsAuthResponseDto() {
 
+
         AuthResponseDto authResponseDto = new AuthResponseDto();
         authResponseDto.setAccessToken("mockToken");
         String mockToken = "mockToken";

@@ -4,6 +4,7 @@ import com.example.demo.dtos.LearningsDTO;
 import com.example.demo.entities.Learnings;
 import com.example.demo.mappers.LearningsMapper;
 import com.example.demo.repositories.LearningsRepository;
+import com.example.demo.repositories.UserLearningsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ public class LearningsServiceTest {
 
     @Mock
     private LearningsRepository learningsRepository;
+
+    @Mock
+    private UserLearningsRepository userLearningsRepository;
 
     @Mock
     private LearningsMapper learningsMapper;
@@ -107,5 +111,33 @@ public class LearningsServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> learningsService.updateLearning(id, learningsDTO));
         verify(learningsRepository, times(1)).findById(id);
+    }
+
+    @Test
+    public void deleteLearning_learningExists_deletesSuccessfully() {
+        UUID id = learnings.getId();
+
+        when(learningsRepository.existsById(id)).thenReturn(true);
+
+        // Act
+        learningsService.deleteLearning(id);
+
+        // Assert
+        verify(userLearningsRepository, times(1)).deleteByLearning_Id(id);
+        verify(learningsRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    public void deleteLearning_learningDoesNotExist_throwsEntityNotFoundException() {
+        UUID id = UUID.randomUUID();
+
+        when(learningsRepository.existsById(id)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(EntityNotFoundException.class, () -> learningsService.deleteLearning(id));
+
+        // Verify that the delete method was never called since the learning doesn't exist
+        verify(userLearningsRepository, never()).deleteByLearning_Id(id);
+        verify(learningsRepository, never()).deleteById(id);
     }
 }

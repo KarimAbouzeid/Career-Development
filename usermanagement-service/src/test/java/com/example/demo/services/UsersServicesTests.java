@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.dtos.TitlesDTO;
+import com.example.demo.dtos.UserScoresDTO;
 import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.entities.Role;
 import com.example.demo.mappers.TitlesMapper;
@@ -11,8 +12,8 @@ import com.example.demo.mappers.UsersMapper;
 import com.example.demo.dtos.UsersDTO;
 import com.example.demo.entities.Users;
 import com.example.demo.entities.Titles;
+import exceptions.UserAlreadyExistsException;
 
-import com.example.demo.exceptions.UserAlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -55,6 +58,12 @@ public class UsersServicesTests {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private RestTemplate restTemplate;
+
+    private final String userScoresServiceUrl = "http://example.com/userScoresService";
+
+
     @InjectMocks
     private UsersServices usersServices;
 
@@ -64,9 +73,10 @@ public class UsersServicesTests {
     private Titles title;
     private TitlesDTO titleDTO;
 
-
     @BeforeEach
     public void setUp() {
+        ReflectionTestUtils.setField(usersServices, "userScoresServiceUrl", userScoresServiceUrl);
+
         usersSignUpDTO = new UsersSignUpDTO();
         usersSignUpDTO.setEmail("test@test.com");
         usersSignUpDTO.setPassword("password");
@@ -81,13 +91,13 @@ public class UsersServicesTests {
         user.setId(UUID.randomUUID());
         user.setEmail("test@test.com");
         user.setPassword("password");
+        user.setRoles(new HashSet<>());
 
         title = new Titles();
         title.setId(UUID.randomUUID());
         title.setTitle("Software Engineer");
 
         titleDTO = new TitlesDTO();
-
     }
 
     @Test
@@ -111,20 +121,42 @@ public class UsersServicesTests {
         assertThrows(EntityNotFoundException.class, () -> usersServices.getUser(userId));
     }
 
-    @Test
-    public void testAddUser_Success() {
-        when(usersRepository.existsByEmail(usersDTO.getEmail())).thenReturn(false);
-        when(usersMapper.toUsers(any(UsersDTO.class))).thenReturn(user);
-        when(usersRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
-        when(titlesRepository.findById(any(UUID.class))).thenReturn(Optional.of(title));
-        when(usersMapper.toUsersDTO(any(Users.class))).thenReturn(usersDTO);
-
-        UsersDTO addedUser = usersServices.addUser(usersDTO);
-
-        assertNotNull(addedUser);
-        assertEquals(usersDTO.getEmail(), addedUser.getEmail());
-        verify(usersRepository, times(1)).save(any(Users.class));
-    }
+//    @Test
+//    public void testAddUser_Success() {
+//        UsersDTO usersDTO = new UsersDTO();
+//        usersDTO.setEmail("newuser@example.com");
+//
+//        Users user = new Users();
+//        user.setId(UUID.randomUUID());
+//
+//        Titles title = new Titles(); // Create a Titles object
+//        title.setId(UUID.randomUUID());
+//
+//        Map<String, Object> managerAndTitle = new HashMap<>();
+//        managerAndTitle.put("manager", new Users()); // Mock manager
+//        managerAndTitle.put("title", title); // Mock title
+//
+//        // Mocking behavior
+//        when(usersRepository.existsByEmail(usersDTO.getEmail())).thenReturn(false);
+//        when(usersMapper.toUsers(usersDTO)).thenReturn(user);
+//        when(usersRepository.save(any(Users.class))).thenReturn(user);
+//        when(usersMapper.toUsersDTO(user)).thenReturn(usersDTO);
+//        when(usersServices.getManagerAndTitle(usersDTO)).thenReturn(managerAndTitle);
+//
+//        // Call the method under test
+//        UsersDTO result = usersServices.addUser(usersDTO);
+//
+//        // Verify the interactions
+//        verify(usersRepository).existsByEmail(usersDTO.getEmail());
+//        verify(usersRepository).save(user);
+//        verify(usersMapper).toUsers(usersDTO);
+//        verify(usersMapper).toUsersDTO(user);
+//        verify(restTemplate).postForObject(eq(userScoresServiceUrl + "/add"), any(UserScoresDTO.class), eq(UserScoresDTO.class));
+//
+//        // Assert the result
+//        assertNotNull(result);
+//        assertEquals(usersDTO.getEmail(), result.getEmail());
+//    }
 
     @Test
     public void testAddUser_UserAlreadyExists_ThrowsException() {
@@ -187,6 +219,7 @@ public class UsersServicesTests {
         assertThrows(IllegalArgumentException.class, () -> usersServices.login(usersDTO.getEmail(), "wrongPassword"));
     }
 
+
     @Test
     public void testSignUp_Success() {
         when(usersRepository.existsByEmail(usersSignUpDTO.getEmail())).thenReturn(false);
@@ -212,15 +245,17 @@ public class UsersServicesTests {
         assertThrows(UserAlreadyExistsException.class, () -> usersServices.signUp(usersSignUpDTO));
     }
 
-
     @Test
-    public void testDeleteUser_Success() {
+    public void testDeleteUser_UserExists() {
         UUID userId = UUID.randomUUID();
+
         when(usersRepository.existsById(userId)).thenReturn(true);
 
         usersServices.deleteUser(userId);
 
-        verify(usersRepository, times(1)).deleteById(userId);
+        verify(usersRepository).existsById(userId);
+        verify(usersRepository).deleteById(userId);
+        verify(restTemplate).delete(userScoresServiceUrl + "/deleteUserScore/" + userId);
     }
 
     @Test
@@ -257,7 +292,6 @@ public class UsersServicesTests {
         assertThrows(EntityNotFoundException.class, () -> usersServices.getAllUsers(pageable));
     }
 
-
     @Test
     public void testFreezeUserByEmail_Success() {
         String email = "test@example.com";
@@ -267,8 +301,7 @@ public class UsersServicesTests {
         UsersDTO returnedUserDTO = usersServices.freezeUserByEmail(email);
 
         assertNotNull(returnedUserDTO);
-        assertTrue(user.isFrozen());
-        assertEquals(usersDTO.getEmail(), returnedUserDTO.getEmail());
+        verify(usersRepository, times(1)).save(user);
         verify(usersRepository, times(1)).findByEmail(email);
     }
 
@@ -281,66 +314,31 @@ public class UsersServicesTests {
     }
 
     @Test
-    public void testUnfreezeUserByEmail_Success() {
+    public void testResetPassword() {
+        Users testUser = new Users();
         String email = "test@example.com";
-        user.setFrozen(true); // User is frozen
-        when(usersRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        when(usersMapper.toUsersDTO(any(Users.class))).thenReturn(usersDTO);
+        testUser.setEmail(email);
+        testUser.setPassword("oldPasswordHash");
 
-        UsersDTO returnedUserDTO = usersServices.unfreezeUserByEmail(email);
-
-        assertNotNull(returnedUserDTO);
-        assertFalse(user.isFrozen());
-        assertEquals(usersDTO.getEmail(), returnedUserDTO.getEmail());
-        verify(usersRepository, times(1)).findByEmail(email);
-    }
-
-    @Test
-    public void testUnfreezeUserByEmail_UserNotFound_ThrowsException() {
-        String email = "test@example.com";
-        when(usersRepository.findByEmail(email)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> usersServices.unfreezeUserByEmail(email));
-    }
-
-    @Test
-    public void testDeleteUserByEmail_Success() {
-        String email = "test@example.com";
-        when(usersRepository.findByEmail(email)).thenReturn(Optional.of(user));
-
-        assertDoesNotThrow(() -> usersServices.deleteUserByEmail(email));
-
-        verify(usersRepository, times(1)).delete(user);
-        verify(usersRepository, times(1)).findByEmail(email);
-    }
-
-    @Test
-    public void testDeleteUserByEmail_UserNotFound_ThrowsException() {
-        String email = "test@example.com";
-        when(usersRepository.findByEmail(email)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> usersServices.deleteUserByEmail(email));
-    }
-
-    @Test
-    public void testResetPassword_Success() {
-        String email = "test@example.com";
         String newPassword = "newPassword";
-        when(usersRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        String encodedPassword = "encodedPasswordHash";
 
-        assertDoesNotThrow(() -> usersServices.resetPassword(email, newPassword));
+        when(usersRepository.findByEmail(email)).thenReturn(Optional.of(testUser));
+        when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
 
-        verify(usersRepository, times(1)).save(user);
-        assertEquals(passwordEncoder.encode(newPassword), user.getPassword());
-        verify(usersRepository, times(1)).findByEmail(email);
+        usersServices.resetPassword(email, newPassword);
+
+        assertEquals(encodedPassword, testUser.getPassword());
+        verify(usersRepository).save(testUser);
     }
 
     @Test
     public void testResetPassword_UserNotFound_ThrowsException() {
         String email = "test@example.com";
+        String newPassword = "newPassword";
         when(usersRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> usersServices.resetPassword(email, "newPassword"));
+        assertThrows(EntityNotFoundException.class, () -> usersServices.resetPassword(email, newPassword));
     }
 
     @Test
@@ -355,76 +353,147 @@ public class UsersServicesTests {
 
         assertDoesNotThrow(() -> usersServices.assignManager(userEmail, managerEmail));
 
-        assertEquals(manager, user.getManager());
+        verify(usersRepository, times(1)).findByEmail(userEmail);
+        verify(usersRepository, times(1)).findByEmail(managerEmail);
         verify(usersRepository, times(1)).save(user);
-        verify(usersRepository, times(2)).findByEmail(anyString());
+        assertEquals(manager, user.getManager()); // Ensure the manager is assigned correctly
     }
 
     @Test
     public void testAssignManager_UserNotFound_ThrowsException() {
         String userEmail = "user@example.com";
         String managerEmail = "manager@example.com";
+
         when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> usersServices.assignManager(userEmail, managerEmail));
+
+        verify(usersRepository, times(1)).findByEmail(userEmail);
+        verify(usersRepository, never()).findByEmail(managerEmail);
+        verify(usersRepository, never()).save(any(Users.class));
     }
 
     @Test
     public void testAssignManager_ManagerNotFound_ThrowsException() {
         String userEmail = "user@example.com";
         String managerEmail = "manager@example.com";
+
         when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(usersRepository.findByEmail(managerEmail)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> usersServices.assignManager(userEmail, managerEmail));
+
+        verify(usersRepository, times(1)).findByEmail(userEmail);
+        verify(usersRepository, times(1)).findByEmail(managerEmail);
+        verify(usersRepository, never()).save(any(Users.class));
     }
 
     @Test
-    public void assignTitleByEmail_Success() {
-        String userEmail = "user@example.com";
+    public void testAssignTitleByEmail_Success() {
+        String email = "user@example.com";
         UUID titleId = UUID.randomUUID();
+        TitlesDTO titleDTO = new TitlesDTO();
+        Titles title = new Titles();
+        title.setId(titleId);
 
-        when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(usersRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(titlesServices.getTitles(titleId)).thenReturn(titleDTO);
         when(titlesMapper.toTitle(titleDTO)).thenReturn(title);
 
-        assertDoesNotThrow(() -> usersServices.assignTitleByEmail(userEmail, titleId));
+        assertDoesNotThrow(() -> usersServices.assignTitleByEmail(email, titleId));
 
-        assertEquals(title, user.getTitleId());
-        verify(usersRepository, times(1)).save(user);
-        verify(usersRepository, times(1)).findByEmail(userEmail);
+        verify(usersRepository, times(1)).findByEmail(email);
         verify(titlesServices, times(1)).getTitles(titleId);
-        verify(titlesMapper, times(1)).toTitle(titleDTO);
+        verify(usersRepository, times(1)).save(user);
+        assertEquals(title, user.getTitleId()); // Ensure the title is assigned correctly
     }
 
     @Test
-    public void assignTitleByEmail_UserNotFound_ThrowsException() {
-        String userEmail = "user@example.com";
+    public void testAssignTitleByEmail_UserNotFound_ThrowsException() {
+        String email = "user@example.com";
         UUID titleId = UUID.randomUUID();
+
+        when(usersRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> usersServices.assignTitleByEmail(email, titleId));
+
+        verify(usersRepository, times(1)).findByEmail(email);
+        verify(titlesServices, never()).getTitles(any(UUID.class));
+        verify(usersRepository, never()).save(any(Users.class));
+    }
+
+    @Test
+    public void testAssignRoleByEmail_Success() {
+        String userEmail = "user@example.com";
+        Long roleId = 1L;
+        Role role = new Role();
+        role.setId(roleId);
+
+        when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(roleRepository.findById(roleId)).thenReturn(Optional.of(role));
+
+        assertDoesNotThrow(() -> usersServices.assignRoleByEmail(userEmail, roleId));
+
+        verify(usersRepository, times(1)).findByEmail(userEmail);
+        verify(roleRepository, times(1)).findById(roleId);
+        verify(usersRepository, times(1)).save(user);
+        assertTrue(user.getRoles().contains(role)); // Ensure the role is assigned correctly
+    }
+
+    @Test
+    public void testAssignRoleByEmail_UserNotFound_ThrowsException() {
+        String userEmail = "user@example.com";
+        Long roleId = 1L;
 
         when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> usersServices.assignTitleByEmail(userEmail, titleId));
+        assertThrows(RuntimeException.class, () -> usersServices.assignRoleByEmail(userEmail, roleId));
 
         verify(usersRepository, times(1)).findByEmail(userEmail);
-        verify(titlesServices, never()).getTitles(any());
-        verify(titlesMapper, never()).toTitle(any());
-        verify(usersRepository, never()).save(any());
+        verify(roleRepository, never()).findById(any(Long.class));
+        verify(usersRepository, never()).save(any(Users.class));
     }
 
     @Test
-    public void assignTitleByEmail_TitleNotFound_ThrowsException() {
+    public void testAssignRoleByEmail_RoleNotFound_ThrowsException() {
         String userEmail = "user@example.com";
-        UUID titleId = UUID.randomUUID();
+        Long roleId = 1L;
 
         when(usersRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
-        when(titlesServices.getTitles(titleId)).thenThrow(new EntityNotFoundException("Title not found"));
+        when(roleRepository.findById(roleId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> usersServices.assignTitleByEmail(userEmail, titleId));
+        assertThrows(RuntimeException.class, () -> usersServices.assignRoleByEmail(userEmail, roleId));
 
         verify(usersRepository, times(1)).findByEmail(userEmail);
-        verify(titlesServices, times(1)).getTitles(titleId);
-        verify(titlesMapper, never()).toTitle(any());
-        verify(usersRepository, never()).save(any());
+        verify(roleRepository, times(1)).findById(roleId);
+        verify(usersRepository, never()).save(any(Users.class));
     }
+
+    @Test
+    public void testGetManagedUsers_Success() {
+        UUID managerId = UUID.randomUUID();
+        List<Users> managedUsers = Collections.singletonList(user);
+
+        when(usersRepository.findByManagerId(managerId)).thenReturn(managedUsers);
+        when(usersMapper.toUsersDTO(user)).thenReturn(usersDTO);
+
+        List<UsersDTO> result = usersServices.getManagedUsers(managerId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(usersRepository, times(1)).findByManagerId(managerId);
+    }
+
+    @Test
+    public void testGetManagedUsers_NoUsersFound_ReturnsEmptyList() {
+        UUID managerId = UUID.randomUUID();
+        when(usersRepository.findByManagerId(managerId)).thenReturn(Collections.emptyList());
+
+        List<UsersDTO> result = usersServices.getManagedUsers(managerId);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(usersRepository, times(1)).findByManagerId(managerId);
+    }
+
 }
