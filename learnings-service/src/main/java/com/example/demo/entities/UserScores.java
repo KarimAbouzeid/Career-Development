@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name="userScores")
+@Table(name="user_scores")
 public class UserScores {
     @Id
     private UUID userId;

@@ -3,13 +3,13 @@ package com.example.demo.services;
 import com.example.demo.dtos.UserScoresDTO;
 import com.example.demo.entities.UserScores;
 import com.example.demo.mappers.UserScoresMapper;
+import com.example.demo.repositories.UserLearningsRepository;
 import com.example.demo.repositories.UserScoresRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -18,11 +18,13 @@ public class UserScoresService {
 
     private final UserScoresRepository usersScoresRepository;
     private final UserScoresMapper userScoresMapper;
+    private final UserLearningsRepository userLearningsRepository;
 
     @Autowired
-    public UserScoresService(UserScoresRepository usersScoresRepository, UserScoresMapper userScoresMapper) {
+    public UserScoresService(UserScoresRepository usersScoresRepository, UserScoresMapper userScoresMapper, UserLearningsRepository userLearningsRepository) {
         this.usersScoresRepository = usersScoresRepository;
         this.userScoresMapper = userScoresMapper;
+        this.userLearningsRepository = userLearningsRepository;
     }
 
     public UserScoresDTO getUserScore(UUID id) {
@@ -40,6 +42,22 @@ public class UserScoresService {
         return userScoresMapper.toUserScoresDTO(updatedScore);
     }
 
+
+    public void calculateUserScore(UUID userId) {
+        int totalScore = 0;
+        if (userLearningsRepository.existsByUserId(userId)) {
+            totalScore = userLearningsRepository.findByUserId(userId)
+                    .stream()
+                    .mapToInt(userLearning -> userLearning.getLearning().getLearningType().getBaseScore())
+                    .sum();
+        }
+
+        UserScores userScores = usersScoresRepository.findById(userId)
+                .orElse(new UserScores(userId, 0));
+        userScores.setScore(totalScore);
+        usersScoresRepository.save(userScores);
+
+    }
 
     public UserScoresDTO addUserScore(UserScoresDTO userScoresDTO) {
 

@@ -36,7 +36,6 @@ public class ScoreboardLevelsService {
 
 
     public ScoreboardLevelsDTO addScoreboardLevel(ScoreboardLevelsDTO scoreboardLevelsDTO) {
-
         ScoreboardLevels scoreboardLevel = scoreboardLevelsMapper.toScoreboardLevels(scoreboardLevelsDTO);
         scoreboardLevelsRepository.save(scoreboardLevel);
         return scoreboardLevelsMapper.toScoreboardLevelsDTO(scoreboardLevel);
@@ -44,11 +43,8 @@ public class ScoreboardLevelsService {
 
     public ScoreboardLevelsDTO updateScoreboardLevel(UUID id, ScoreboardLevelsDTO scoreboardLevelsUpdateDTO) {
 
-
         ScoreboardLevels scoreboardLevel = scoreboardLevelsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ScoreboardLevel not found with ID: " + id));
-
-
 
         scoreboardLevelsMapper.updateScoreboardLevelsFromDTO(scoreboardLevelsUpdateDTO,scoreboardLevel);
 

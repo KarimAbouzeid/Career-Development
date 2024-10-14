@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
@@ -120,6 +121,17 @@ public class UsersController {
         return ResponseEntity.ok("Title assigned successfully");
     }
 
+    @PutMapping("/assignRole")
+    public ResponseEntity<String> assignRoleByEmail(@RequestParam String email, @RequestParam Long roleId) {
+            usersServices.assignRoleByEmail(email, roleId);
+            return ResponseEntity.ok("Role assigned successfully");
+    }
+
+    @GetMapping("/managed/{managerId}")
+    public ResponseEntity<List<UsersDTO>> getManagedUsers(@PathVariable UUID managerId) {
+        List<UsersDTO> managedUsers = usersServices.getManagedUsers(managerId);
+        return new ResponseEntity<>(managedUsers, HttpStatus.OK);
+    }
 
 
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name="scoreboardLevels")
+@Table(name="scoreboard_levels")
 public class ScoreboardLevels {
 
     @Id

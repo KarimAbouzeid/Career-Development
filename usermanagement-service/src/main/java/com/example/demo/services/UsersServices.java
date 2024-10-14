@@ -20,11 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UsersServices {
@@ -75,7 +77,12 @@ public class UsersServices {
 
         return usersMapper.toUsersDTO(user);
     }
+    public UUID loadUserIdByEmail(String email) throws UsernameNotFoundException {
+        Users user = usersRepository.findByEmail(email) .orElseThrow(() ->
+                new UsernameNotFoundException("User not exists by Username or Email"));
 
+        return user.getId();
+    }
     public UsersDTO login(String email, String password) {
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found"));
@@ -266,5 +273,23 @@ public class UsersServices {
     }
 
 
+    public void assignRoleByEmail(String userEmail, Long roleId) {
+        Users user = usersRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        user.getRoles().add(role);
+
+        usersRepository.save(user);
+    }
+
+
+    public List<UsersDTO> getManagedUsers(UUID managerId) {
+        List<Users> managedUsers = usersRepository.findByManagerId(managerId);
+        return managedUsers.stream()
+                .map(usersMapper::toUsersDTO)
+                .collect(Collectors.toList());    }
 }
 
