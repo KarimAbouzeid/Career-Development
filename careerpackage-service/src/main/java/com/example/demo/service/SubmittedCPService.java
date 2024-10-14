@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 
+import com.example.demo.dtos.CareerPackageResponseDto;
 import com.example.demo.dtos.RequestSubmitCPDto;
 import com.example.demo.dtos.RequestSubmitCPwithID;
 import com.example.demo.dtos.SubmittedCPDto;
@@ -11,9 +12,12 @@ import com.example.demo.repository.SubmittedCPRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -84,6 +88,18 @@ public class SubmittedCPService {
     public void deleteSubmittedCP (SubmittedCPDto submittedCPDto) {
 
         submittedCPRepository.deleteById(submittedCPDto.getSubmissionId());
+
+    }
+
+    public Page<SubmittedCP>  getCareerPackagePaginatedByUser(UUID userId, Pageable pageable) {
+
+        Page<SubmittedCP> submittedCPPage = submittedCPRepository.findSubmittedCPByUserId(userId, pageable);
+        System.out.println(submittedCPPage);
+        if(submittedCPPage.isEmpty()) {
+            return Page.empty();
+        }
+        return submittedCPPage;
+
 
     }
 

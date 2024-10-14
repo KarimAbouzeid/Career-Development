@@ -4,12 +4,16 @@ package com.example.demo.controllers;
 import com.example.demo.dtos.RequestSubmitCPDto;
 import com.example.demo.dtos.RequestSubmitCPwithID;
 import com.example.demo.dtos.SubmittedCPDto;
+import com.example.demo.entities.SubmittedCP;
 import com.example.demo.service.SubmittedCPService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
 @RestController
@@ -23,7 +27,7 @@ public class SubmittedCPController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<SubmittedCPDto> addSubmittedCP(RequestSubmitCPDto requestSubmitCP) {
+    public ResponseEntity<SubmittedCPDto> addSubmittedCP(@RequestBody RequestSubmitCPDto requestSubmitCP) {
         SubmittedCPDto createdSubmittedCP = submittedCPService.addSubmittedCP(requestSubmitCP);
         return ResponseEntity.ok(createdSubmittedCP);
     }
@@ -39,4 +43,16 @@ public class SubmittedCPController {
         submittedCPService.deleteSubmittedCP(submittedCPDto);
         return ResponseEntity.ok("Submitted CP with submission id " + submittedCPDto.getSubmissionId() + " has been deleted successfully");
     }
+
+    @GetMapping("/getCareerPackagePaginatedByUser/{userId}")
+    public ResponseEntity<Page<SubmittedCP>> getCareerPackagePaginatedByUser(@RequestParam(defaultValue = "0") int page,
+                                                                             @RequestParam(defaultValue = "10") int size,
+                                                                             @PathVariable UUID userId)
+    {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SubmittedCP> submittedCP = submittedCPService.getCareerPackagePaginatedByUser(userId, pageable);
+        return ResponseEntity.ok(submittedCP);
+    }
+
 }
