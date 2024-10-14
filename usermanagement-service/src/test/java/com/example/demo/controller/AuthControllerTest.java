@@ -45,8 +45,9 @@ public class AuthControllerTest {
 
     @Test
     public void login_ReturnsAuthResponseDto() {
+        AuthResponseDto authResponseDto = new AuthResponseDto();
         String mockToken = "mockToken";
-        when(authService.login(any(LoginDto.class))).thenReturn(mockToken);
+        when(authService.login(any(LoginDto.class))).thenReturn(authResponseDto);
 
         ResponseEntity<AuthResponseDto> response = authController.login(loginDto);
 

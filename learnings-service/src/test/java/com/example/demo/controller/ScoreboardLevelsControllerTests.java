@@ -38,7 +38,9 @@ public class ScoreboardLevelsControllerTests {
 
     @BeforeEach
     public void setUp() {
-        scoreboardLevelsDTO = new ScoreboardLevelsDTO("Expert", 100);
+        UUID scoreboardLevelId = UUID.randomUUID();
+
+        scoreboardLevelsDTO = new ScoreboardLevelsDTO(scoreboardLevelId,"Expert", 100);
     }
 
     @Test

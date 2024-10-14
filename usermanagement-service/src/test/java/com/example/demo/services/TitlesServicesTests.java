@@ -154,8 +154,8 @@ public class TitlesServicesTests {
         Titles title2 = new Titles(UUID.randomUUID(), "Project Manager", true, null, department);
         List<Titles> titlesList = Arrays.asList(title1, title2);
 
-        TitlesDTO titleDTO1 = new TitlesDTO(title1.getTitle(), title1.getIsManager(), departmentId);
-        TitlesDTO titleDTO2 = new TitlesDTO(title2.getTitle(), title2.getIsManager(), departmentId);
+        TitlesDTO titleDTO1 = new TitlesDTO(UUID.randomUUID(),title1.getTitle(), title1.getIsManager(), departmentId);
+        TitlesDTO titleDTO2 = new TitlesDTO(UUID.randomUUID(),title2.getTitle(), title2.getIsManager(), departmentId);
 
         when(departmentsRepository.findById(departmentId)).thenReturn(Optional.of(department));
         when(titlesRepository.findByDepartmentId(department)).thenReturn(titlesList);

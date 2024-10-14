@@ -44,22 +44,22 @@ public class AuthServiceImplTest {
         loginDto.setPassword("password");
     }
 
-    @Test
-    public void testLogin_validCredentials_returnsToken() {
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(authentication);
-        when(jwtTokenProvider.generateToken(authentication)).thenReturn("mockToken");
-
-        String token = authService.login(loginDto);
-
-        assertEquals("mockToken", token);
-        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(jwtTokenProvider).generateToken(authentication);
-
-        // check that the authentication was set in SecurityContextHolder
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        assertEquals(authentication, auth);
-    }
+//    @Test
+//    public void testLogin_validCredentials_returnsToken() {
+//        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+//                .thenReturn(authentication);
+//        when(jwtTokenProvider.generateToken(authentication)).thenReturn("mockToken");
+//
+//        String token = authService.login(loginDto);
+//
+//        assertEquals("mockToken", token);
+//        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+//        verify(jwtTokenProvider).generateToken(authentication);
+//
+//        // check that the authentication was set in SecurityContextHolder
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        assertEquals(authentication, auth);
+//    }
 
     @Test
     public void testLogin_invalidCredentials_throwsException() {

@@ -14,7 +14,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,11 +43,18 @@ public class ScoreboardLevelsServicesTests {
     private ScoreboardLevelsDTO scoreboardLevelsDTO1;
     private ScoreboardLevelsDTO scoreboardLevelsDTO2;
     private ScoreboardLevels scoreboardLevels1;
+    private ScoreboardLevels scoreboardLevels2;
+
     @BeforeEach
     public void setUp() {
-        scoreboardLevelsDTO1 = new ScoreboardLevelsDTO("Expert", 100);
-        scoreboardLevelsDTO1 = new ScoreboardLevelsDTO("Professional", 200);
+        UUID scoreboardLevelId = UUID.randomUUID();
+        UUID scoreboardLevelId2 = UUID.randomUUID();
+        scoreboardLevelsDTO1 = new ScoreboardLevelsDTO(scoreboardLevelId,"Professional", 200);
         scoreboardLevels1 = new ScoreboardLevels("Expert", 100);
+
+        scoreboardLevelsDTO2 = new ScoreboardLevelsDTO(scoreboardLevelId2, "Professional", 200);
+        scoreboardLevels2 = new ScoreboardLevels("Professional", 200);
+
     }
 
 
@@ -135,6 +147,65 @@ public class ScoreboardLevelsServicesTests {
         verify(scoreboardLevelsRepository, times(1)).existsById(uuid);
         verify(scoreboardLevelsRepository, never()).deleteById(uuid);
     }
+
+
+    @Test
+    public void ScoreboardLevelsService_GetAllScoreboardLevels_ReturnsListOfScoreboardLevelsDTO() {
+        // Arrange
+        Pageable pageable = Pageable.ofSize(10);
+        List<ScoreboardLevels> levels = List.of(scoreboardLevels1, scoreboardLevels2);
+        Page<ScoreboardLevels> scoreboardLevelsPage = new PageImpl<>(levels);
+
+        when(scoreboardLevelsRepository.findAll(pageable)).thenReturn(scoreboardLevelsPage);
+        when(scoreboardLevelsMapper.toScoreboardLevelsDTO(scoreboardLevels1)).thenReturn(scoreboardLevelsDTO1);
+        when(scoreboardLevelsMapper.toScoreboardLevelsDTO(scoreboardLevels2)).thenReturn(scoreboardLevelsDTO2);
+
+        // Act
+        Page<ScoreboardLevelsDTO> result = scoreboardLevelsService.getAllScoreboardLevels(pageable);
+
+        // Assert
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(2, result.getContent().size());
+        Assertions.assertEquals(scoreboardLevelsDTO1, result.getContent().get(0));
+        Assertions.assertEquals(scoreboardLevelsDTO2, result.getContent().get(1));
+    }
+
+    @Test
+    public void ScoreboardLevelsService_GetAllScoreboardLevels_ThrowsEntityNotFoundException() {
+        // Arrange
+        Pageable pageable = Pageable.ofSize(10);
+        Page<ScoreboardLevels> emptyPage = new PageImpl<>(Collections.emptyList());
+
+        when(scoreboardLevelsRepository.findAll(pageable)).thenReturn(emptyPage);
+
+        // Act & Assert
+        Assertions.assertThrows(EntityNotFoundException.class, () -> scoreboardLevelsService.getAllScoreboardLevels(pageable));
+    }
+
+    @Test
+    public void ScoreboardLevelsService_GetLevelByScore_ReturnsCorrectLevel() {
+        // Arrange
+        when(scoreboardLevelsRepository.findAll()).thenReturn(List.of(scoreboardLevels1, scoreboardLevels2));
+
+        // Act
+        String level = scoreboardLevelsService.getLevelByScore(150);
+
+        // Assert
+        Assertions.assertEquals("Professional", level);
+    }
+
+    @Test
+    public void ScoreboardLevelsService_GetLevelByScore_ReturnsGuruForHighScore() {
+        // Arrange
+        when(scoreboardLevelsRepository.findAll()).thenReturn(List.of(scoreboardLevels1, scoreboardLevels2));
+
+        // Act
+        String level = scoreboardLevelsService.getLevelByScore(250);
+
+        // Assert
+        Assertions.assertEquals("Guru", level);
+    }
+
 
 
 }

@@ -15,10 +15,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -487,6 +487,66 @@ public class UsersControllerTests {
     }
 
 
+    @Test
+    public void assignRoleByEmail_success_ReturnsSuccessMessage() throws Exception {
+        String email = "johndoe@example.com";
+        Long roleId = 1L;
 
+        doNothing().when(usersServices).assignRoleByEmail(email, roleId);
+
+        mockMvc.perform(put("/api/users/assignRole")
+                        .param("email", email)
+                        .param("roleId", roleId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Role assigned successfully"));
+
+        verify(usersServices, times(1)).assignRoleByEmail(email, roleId);
+    }
+
+    @Test
+    public void assignRoleByEmail_userNotExists_ReturnsNotFound() throws Exception {
+        String email = "johndoe@example.com";
+        Long roleId = 1L;
+
+        doThrow(new EntityNotFoundException("User not found with email: " + email))
+                .when(usersServices).assignRoleByEmail(email, roleId);
+
+        mockMvc.perform(put("/api/users/assignRole")
+                        .param("email", email)
+                        .param("roleId", roleId.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with email: " + email));
+
+        verify(usersServices, times(1)).assignRoleByEmail(email, roleId);
+    }
+
+    @Test
+    public void getManagedUsers_success_ReturnsListOfUsersDTO() throws Exception {
+        UUID managerId = UUID.randomUUID();
+        List<UsersDTO> managedUsers = List.of(usersDTO);
+
+        when(usersServices.getManagedUsers(managerId)).thenReturn(managedUsers);
+
+        mockMvc.perform(get("/api/users/managed/{managerId}", managerId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].firstName").value("John"))
+                .andExpect(jsonPath("$[0].lastName").value("Doe"))
+                .andExpect(jsonPath("$[0].email").value("johndoe@example.com"));
+
+        verify(usersServices, times(1)).getManagedUsers(managerId);
+    }
+
+    @Test
+    void getManagedUsers_managerNotExists_ReturnsNotFound() throws Exception {
+        UUID managerId = UUID.randomUUID();
+
+        when(usersServices.getManagedUsers(managerId)).thenThrow(new EntityNotFoundException("Manager not found with ID: " + managerId));
+
+        mockMvc.perform(get("/api/users/managed/{managerId}", managerId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Manager not found with ID: " + managerId));
+    }
 
 }

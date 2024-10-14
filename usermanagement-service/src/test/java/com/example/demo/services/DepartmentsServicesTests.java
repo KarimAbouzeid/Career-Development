@@ -38,8 +38,8 @@ public class DepartmentsServicesTests {
     private Departments departments1;
     @BeforeEach
     public void setUp() {
-        departmentsDTO1= new DepartmentsDTO("Software Engineering");
-        departmentsDTO2 = new DepartmentsDTO("Quality Assurance");
+        departmentsDTO1= new DepartmentsDTO(UUID.randomUUID(),"Software Engineering");
+        departmentsDTO2 = new DepartmentsDTO(UUID.randomUUID(),"Quality Assurance");
         departments1 = new Departments("Software Engineering");
     }
 
