@@ -13,6 +13,7 @@ import com.example.demo.dtos.UsersDTO;
 import com.example.demo.entities.Users;
 import com.example.demo.entities.Titles;
 import exceptions.UserAlreadyExistsException;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -219,33 +220,23 @@ public class UsersServicesTests {
     }
 
 
-//    @Test
-//    public void testSignUp_Success() {
-//        // Arrange
-//        when(usersRepository.existsByEmail(usersSignUpDTO.getEmail())).thenReturn(false);
-//        when(roleRepository.findByName("USER")).thenReturn(Optional.of(new Role()));
-//        when(usersMapper.toUsers(any(UsersSignUpDTO.class))).thenReturn(user);
-//
-//        Users savedUser = new Users();
-//        savedUser.setId(UUID.randomUUID()); // Ensure the user has an ID
-//        when(usersRepository.save(user)).thenReturn(savedUser);
-//        when(usersMapper.toUsersSignupDTO(any(Users.class))).thenReturn(usersSignUpDTO);
-//        when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
-//
-//        // Mocking the postForObject method of RestTemplate
-//        doNothing().when(restTemplate).postForObject(anyString(), any(), any(Class.class), Optional.ofNullable(any()));
-//
-//        // Act
-//        UsersSignUpDTO addedUser = usersServices.signUp(usersSignUpDTO);
-//
-//        // Assert
-//        assertNotNull(addedUser);
-//        assertEquals(usersSignUpDTO.getEmail(), addedUser.getEmail());
-//        verify(usersRepository, times(1)).save(any(Users.class));
-//        verify(roleRepository, times(1)).findByName("USER");
-//        assertEquals("hashedPassword", user.getPassword()); // Ensure password is hashed
-//    }
+    @Test
+    public void testSignUp_Success() {
+        when(usersRepository.existsByEmail(usersSignUpDTO.getEmail())).thenReturn(false);
+        when(roleRepository.findByName("USER")).thenReturn(Optional.of(new Role()));
+        when(usersMapper.toUsers(any(UsersSignUpDTO.class))).thenReturn(user);
+        when(usersMapper.toUsersSignupDTO(any(Users.class))).thenReturn(usersSignUpDTO);
+        when(usersRepository.save(any(Users.class))).thenReturn(user);
 
+        // Act
+        UsersSignUpDTO addedUser = usersServices.signUp(usersSignUpDTO);
+
+        // Assert
+        assertNotNull(addedUser);
+        assertEquals(usersSignUpDTO.getEmail(), addedUser.getEmail());
+        verify(usersRepository, times(1)).save(any(Users.class)); // Ensure the user was saved
+        verify(roleRepository, times(1)).findByName("USER"); // Ensure the role was fetched
+    }
 
     @Test
     public void testSignUp_UserAlreadyExists_ThrowsException() {

@@ -1,14 +1,14 @@
 package com.example.demo.services;
 
 import com.example.demo.components.JwtTokenProvider;
+import com.example.demo.dtos.AuthResponseDto;
 import com.example.demo.dtos.LoginDto;
-import exceptions.InvalidCredentialsException;
+import com.example.demo.exceptions.InvalidCredentialsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -60,6 +60,7 @@ public class AuthServiceImplTest {
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        assertEquals(authentication, auth);
 //    }
+
 
     @Test
     public void testLogin_invalidCredentials_throwsException() {

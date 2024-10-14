@@ -22,17 +22,7 @@ public class UsersController {
 
     private final UsersServices usersServices;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin")
-    public ResponseEntity<String> helloAdmin(){
-        return ResponseEntity.ok("Hello Admin");
-    }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/user")
-    public ResponseEntity<String> helloUser(){
-        return ResponseEntity.ok("Hello User");
-    }
 
     @Autowired
     public UsersController(UsersServices usersServices) {
@@ -44,6 +34,14 @@ public class UsersController {
         UsersDTO userDTO = usersServices.getUser(id);
         return ResponseEntity.ok(userDTO);
     }
+
+    @GetMapping("/getManager/{id}")
+    public ResponseEntity<UUID> getManager(@PathVariable UUID id) {
+        System.out.println("WASAL");
+        UUID managerUuid = usersServices.getManager(id);
+        return ResponseEntity.ok(managerUuid);
+    }
+
 
     @PutMapping("/update")
     public ResponseEntity<UsersDTO> updateUser( @RequestBody UsersDTO usersUpdateDTO) {

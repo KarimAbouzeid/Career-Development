@@ -8,13 +8,13 @@ import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.entities.Role;
 import com.example.demo.entities.Titles;
 import com.example.demo.entities.Users;
+import com.example.demo.exceptions.UserAlreadyExistsException;
 import com.example.demo.mappers.TitlesMapper;
 import com.example.demo.mappers.UsersMapper;
 import com.example.demo.repositories.RoleRepository;
 import com.example.demo.repositories.TitlesRepository;
 import com.example.demo.repositories.UsersRepository;
-import exceptions.InvalidCredentialsException;
-import exceptions.UserAlreadyExistsException;
+import com.example.demo.exceptions.InvalidCredentialsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +62,13 @@ public class UsersServices {
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
 
         return usersMapper.toUsersDTO(user);
+    }
+
+    public UUID getManager(UUID id) {
+        Users user = usersRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
+
+        return user.getManager().getId();
     }
 
     public UsersDTO getUserByEmail(String email) {
