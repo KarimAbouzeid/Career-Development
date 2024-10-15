@@ -62,4 +62,5 @@ public class ScoreboardLevelsController {
     public String getLevelByScore(@RequestParam int score) {
         return scoreboardLevelsService.getLevelByScore(score);
     }
+
 }

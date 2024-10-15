@@ -39,7 +39,8 @@ public class DepartmentsControllerTests {
 
     @BeforeEach
     public void setUp() {
-        departmentsDTO = new DepartmentsDTO("Software Engineering");
+        departmentsDTO = new DepartmentsDTO(UUID.randomUUID(),
+        "Software Engineering");
     }
 
     @Test
@@ -184,8 +185,9 @@ public class DepartmentsControllerTests {
 
     @Test
     public void getAllDepartments_returnsDepartmentsList() throws Exception {
-        DepartmentsDTO departmentsDTO1 = new DepartmentsDTO("Software Engineering");
-        DepartmentsDTO departmentsDTO2 = new DepartmentsDTO("Quality Assurance");
+
+        DepartmentsDTO departmentsDTO1 = new DepartmentsDTO(UUID.randomUUID(),"Software Engineering");
+        DepartmentsDTO departmentsDTO2 = new DepartmentsDTO(UUID.randomUUID(),"Quality Assurance");
         List<DepartmentsDTO> departmentsList = Arrays.asList(departmentsDTO1, departmentsDTO2);
 
         when(departmentsServices.getAllDepartments()).thenReturn(departmentsList);

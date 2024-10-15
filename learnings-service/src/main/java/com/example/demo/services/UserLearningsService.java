@@ -99,15 +99,12 @@ public class UserLearningsService {
     }
 
 
-
-
     public List<UserLearningsDTO> getSubmittedLearningsByUser(UUID userId) {
         List<UserLearnings> submittedLearnings = userLearningsRepository.findByUserId(userId);
         return submittedLearnings.stream()
                 .map(userLearningsMapper::toUserLearningsDTO)
                 .collect(Collectors.toList());
     }
-
 
 
     public List<UserLearningResponseDTO> getSubmittedLearningsDetails(UUID userId) {
