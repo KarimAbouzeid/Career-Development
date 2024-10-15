@@ -1,16 +1,21 @@
 package com.example.demo.services;
 
+import com.example.demo.dtos.NotificationDTO;
 import com.example.demo.dtos.SubmitUserLearningDTO;
 import com.example.demo.dtos.UserLearningResponseDTO;
 import com.example.demo.dtos.UserLearningsDTO;
 import com.example.demo.entities.*;
 import com.example.demo.enums.ApprovalStatus;
+import com.example.demo.enums.EntityType;
+import com.example.demo.kafka.KafkaProducerService;
 import com.example.demo.mappers.UserLearningsMapper;
 import com.example.demo.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,9 +32,13 @@ public class UserLearningsService {
 
     private final UserLearningsMapper userLearningsMapper;
 
+    private final KafkaProducerService kafkaProducerService;
+
+    @Value("notification")
+    private String approvalNotificationTopic;
 
     @Autowired
-    public UserLearningsService(UserLearningsRepository userLearningsRepository, LearningsRepository learningsRepository, LearningTypesRepository learningTypesRepository, LearningSubjectsRepository learningSubjectsRepository, ProofTypesRepository proofTypesRepository, BoostersRepository boostersRepository, UserLearningsMapper userLearningsMapper) {
+    public UserLearningsService(UserLearningsRepository userLearningsRepository, LearningsRepository learningsRepository, LearningTypesRepository learningTypesRepository, LearningSubjectsRepository learningSubjectsRepository, ProofTypesRepository proofTypesRepository, BoostersRepository boostersRepository, UserLearningsMapper userLearningsMapper, KafkaProducerService kafkaProducerService) {
         this.userLearningsRepository = userLearningsRepository;
         this.learningsRepository = learningsRepository;
         this.learningTypesRepository = learningTypesRepository;
@@ -37,6 +46,7 @@ public class UserLearningsService {
         this.proofTypesRepository = proofTypesRepository;
         this.boostersRepository = boostersRepository;
         this.userLearningsMapper = userLearningsMapper;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     public void submitUserLearning(SubmitUserLearningDTO dto) {
@@ -141,6 +151,10 @@ public class UserLearningsService {
         userLearningsRepository.save(userLearning);
 
         userLearningsMapper.toUserLearningsDTO(userLearning);
+
+        NotificationDTO notification = new NotificationDTO("Learning Status Update", new Date(), EntityType.Manager,userLearning.getUserId(),false);
+
+        kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
     }
 
     public void updateComment(UUID id, String comment) {

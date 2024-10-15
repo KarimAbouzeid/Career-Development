@@ -11,13 +11,19 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class NotificationDataDTO {
+public class ReceivedNotificationDTO {
 
-    private UUID id;
-
-    private UUID action_id;
+    private String actionName;
 
     private Date date;
 
     private EntityType entityType;
+
+    private UUID receiverId;
+
+    private boolean seen;
+
 }
+
+
+

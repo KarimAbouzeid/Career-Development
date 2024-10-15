@@ -16,4 +16,9 @@ public class KafkaTopic {
     public NewTopic userIdTopic() {
         return new NewTopic("userId-delete", 1, (short) 1);
     }
+
+    @Bean
+    public NewTopic notificationTopic() {
+        return new NewTopic("notification", 1, (short) 1);
+    }
 }
