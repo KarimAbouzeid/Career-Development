@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.dtos.UserScoresDTO;
 import com.example.demo.messages.UserSubmissionMSG;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -21,7 +22,7 @@ public class KafkaProducerConfig {
     private String bootstrapServers;
 
     @Bean
-    public ProducerFactory<String, UserSubmissionMSG> producerFactory(){
+    public ProducerFactory<String, Object> producerFactory(){
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -37,7 +38,9 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
-    public KafkaTemplate<String, UserSubmissionMSG> kafkaTemplate(){
+    @Bean
+    public KafkaTemplate<String, Object> kafkaTemplate(){
         return new KafkaTemplate<>(producerFactory());
     }
+
 }

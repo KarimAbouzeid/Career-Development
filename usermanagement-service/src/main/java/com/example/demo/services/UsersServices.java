@@ -146,7 +146,7 @@ public class UsersServices {
         userScoresDTO.setUserId(userId);
         userScoresDTO.setScore(0); // Initial score of 0
 
-        kafkaProducerService.sendMessage(userScoresTopic, userScoresDTO);
+        kafkaProducerService.addUserScore(userScoresTopic, userScoresDTO);
     }
 
     public UsersDTO updateUsers( UsersDTO usersUpdateDTO) {
@@ -180,10 +180,8 @@ public class UsersServices {
     }
 
     private void deleteScoreUserInLearnings(UUID userId) {
-        kafkaProducerService.sendMessage(userIdTopic, userId);
+        kafkaProducerService.deleteUserScore(userIdTopic, userId);
     }
-
-
 
     public Page<UsersDTO> getAllUsers(Pageable pageable) {
         Page<Users> usersPage = usersRepository.findAll(pageable);
@@ -241,6 +239,7 @@ public class UsersServices {
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
         usersRepository.delete(user);
+        deleteScoreUserInLearnings(user.getId());
     }
 
 
