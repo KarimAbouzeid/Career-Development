@@ -23,8 +23,6 @@ public class NotificationData {
     @JoinColumn(name = "action_id", nullable = true)
     private Actions action;
 
-    private UUID actorId;
-
     private Date date;
 
     private EntityType entityType;
