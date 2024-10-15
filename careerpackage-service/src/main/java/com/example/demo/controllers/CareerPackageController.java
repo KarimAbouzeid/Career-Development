@@ -34,6 +34,12 @@ public class CareerPackageController {
         return new ResponseEntity<>(createdCareerPackage, HttpStatus.CREATED);
     }
 
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<CareerPackageResponseDto> updateCareerPackage(@PathVariable UUID id, @RequestBody CareerPackageRequestDto careerPackageDto) {
+        CareerPackageResponseDto updatedCareerPackage = careerPackageService.updateCareerPackage(id, careerPackageDto);
+        return ResponseEntity.ok(updatedCareerPackage);
+    }
+
     //Called By Backend only
     @GetMapping("/getCareerPackageByTitle/{title}")
     public ResponseEntity<UUID> getCareerPackageByTitle(@PathVariable  Title title) {

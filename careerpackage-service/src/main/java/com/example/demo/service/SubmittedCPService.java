@@ -50,6 +50,8 @@ public class SubmittedCPService {
     public SubmittedCPDto addSubmittedCP(RequestSubmitCPDto requestSubmitCPDto) {
 
         String urlGetManager = userManagementServiceUrl + "/getManager/" + requestSubmitCPDto.getUserId();
+
+        System.out.println(urlGetManager);
         UUID managerId = restTemplate.getForObject(urlGetManager, UUID.class);
 
 
@@ -62,6 +64,7 @@ public class SubmittedCPService {
         submittedCPDto.setUserId(requestSubmitCPDto.getUserId());
         submittedCPDto.setManagerId(managerId);
         submittedCPDto.setGoogleDocLink(requestSubmitCPDto.getGoogleDocLink());
+        submittedCPDto.setTitle(requestSubmitCPDto.getTitle());
         submittedCPDto.setStatus(Status.PENDING);
 
         SubmittedCP submittedCP = submittedCPMapper.toSubmittedCP(submittedCPDto);

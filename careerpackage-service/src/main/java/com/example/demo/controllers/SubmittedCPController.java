@@ -28,6 +28,7 @@ public class SubmittedCPController {
 
     @PostMapping("/add")
     public ResponseEntity<SubmittedCPDto> addSubmittedCP(@RequestBody RequestSubmitCPDto requestSubmitCP) {
+        System.out.println("RequestSubmitCPDto: " + requestSubmitCP);
         SubmittedCPDto createdSubmittedCP = submittedCPService.addSubmittedCP(requestSubmitCP);
         return ResponseEntity.ok(createdSubmittedCP);
     }

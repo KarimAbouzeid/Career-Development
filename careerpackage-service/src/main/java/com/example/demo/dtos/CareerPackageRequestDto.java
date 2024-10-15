@@ -12,9 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CareerPackageRequestDto {
 
+    private Title title;
 
     private String googleDocLink;
 
-    private Title title;
+
 
 }

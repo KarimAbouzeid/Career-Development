@@ -45,6 +45,7 @@ public class CareerPackageService {
         CareerPackage careerPackage = careerPackageRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Career Package not found")
         );
+        System.out.println("Career Package: " + careerPackage);
         careerPackageMapper.updateCareerPackageFromRequestDto(careerPackageRequestDto, careerPackage);
         careerPackageRepository.save(careerPackage);
         return careerPackageMapper.toCareerPackageResponseDto(careerPackage);
