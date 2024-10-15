@@ -9,6 +9,7 @@ import com.example.demo.entities.Role;
 import com.example.demo.entities.Titles;
 import com.example.demo.entities.Users;
 import com.example.demo.exceptions.UserAlreadyExistsException;
+import com.example.demo.kafka.KafkaProducerService;
 import com.example.demo.mappers.TitlesMapper;
 import com.example.demo.mappers.UsersMapper;
 import com.example.demo.repositories.RoleRepository;
@@ -40,13 +41,18 @@ public class UsersServices {
     private final TitlesServices titlesServices;
 
 
-    private final RestTemplate restTemplate;
+    private final KafkaProducerService kafkaProducerService;
 
-    @Value("${userScoresService.url}")
-    private String userScoresServiceUrl;
+    @Value("${kafka.topic.userScores}")
+    private String userScoresTopic;
+
+    @Value("${kafka.topic.userId}")
+    private String userIdTopic;
+
+
 
     @Autowired
-    public UsersServices(UsersRepository usersRepository, TitlesMapper titlesMapper, UsersMapper usersMapper, TitlesRepository titlesRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, TitlesServices titlesServices, RestTemplate restTemplate) {
+    public UsersServices(UsersRepository usersRepository, TitlesMapper titlesMapper, UsersMapper usersMapper, TitlesRepository titlesRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, TitlesServices titlesServices, KafkaProducerService kafkaProducerService) {
         this.usersRepository = usersRepository;
         this.titlesMapper = titlesMapper;
         this.usersMapper = usersMapper;
@@ -54,7 +60,7 @@ public class UsersServices {
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.titlesServices = titlesServices;
-        this.restTemplate = restTemplate;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     public UsersDTO getUser(UUID id) {
@@ -140,8 +146,7 @@ public class UsersServices {
         userScoresDTO.setUserId(userId);
         userScoresDTO.setScore(0); // Initial score of 0
 
-        String url = userScoresServiceUrl + "/add";
-        restTemplate.postForObject(url, userScoresDTO, UserScoresDTO.class);
+        kafkaProducerService.sendMessage(userScoresTopic, userScoresDTO);
     }
 
     public UsersDTO updateUsers( UsersDTO usersUpdateDTO) {
@@ -175,8 +180,7 @@ public class UsersServices {
     }
 
     private void deleteScoreUserInLearnings(UUID userId) {
-        String url = userScoresServiceUrl + "/deleteUserScore/" + userId;
-        restTemplate.delete(url);
+        kafkaProducerService.sendMessage(userIdTopic, userId);
     }
 
 
