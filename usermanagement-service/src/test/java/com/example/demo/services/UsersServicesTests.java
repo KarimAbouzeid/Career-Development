@@ -4,6 +4,7 @@ import com.example.demo.dtos.TitlesDTO;
 import com.example.demo.dtos.UserScoresDTO;
 import com.example.demo.dtos.UsersSignUpDTO;
 import com.example.demo.entities.Role;
+import com.example.demo.exceptions.UserAlreadyExistsException;
 import com.example.demo.mappers.TitlesMapper;
 import com.example.demo.repositories.RoleRepository;
 import com.example.demo.repositories.UsersRepository;
@@ -12,7 +13,6 @@ import com.example.demo.mappers.UsersMapper;
 import com.example.demo.dtos.UsersDTO;
 import com.example.demo.entities.Users;
 import com.example.demo.entities.Titles;
-import exceptions.UserAlreadyExistsException;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
