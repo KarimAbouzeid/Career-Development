@@ -22,10 +22,9 @@ public class KafkaConsumerService {
         log.info("Received UserScoresDTO for adding: {}", userScoresDTO);
 
     }
-//    @KafkaListener(topics = "${kafka.topic.userId}", groupId = "group1", containerFactory = "kafkaListenerContainerFactory")
-//    public void deleteUserScore(UUID userId) {
-//        userScoresService.deleteUserScore(userId);
-//        log.info("Received userId for deletion: {}", userId);
-//
-//    }
+    @KafkaListener(topics = "${kafka.topic.userId}", groupId = "group1", containerFactory = "kafkaListenerContainerFactory")
+    public void deleteUserScore(UUID userId) {
+        userScoresService.deleteUserScore(userId);
+        log.info("Received userId for deletion: {}", userId);
+    }
 }
