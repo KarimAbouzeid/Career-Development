@@ -1,7 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.dtos.UserScoresDTO;
-import com.example.demo.messages.UserSubmissionMSG;
+
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;

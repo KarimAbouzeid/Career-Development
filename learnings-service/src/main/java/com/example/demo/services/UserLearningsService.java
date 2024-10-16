@@ -90,8 +90,21 @@ public class UserLearningsService {
         // Return the mapped DTO
         userLearningsMapper.toUserLearningsDTO(userLearning);
 
+        System.out.println(dto);
+        System.out.println(dto.getUserId());
+
+
         UUID managerId = userService.getManager(dto.getUserId());
-        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("New learning submitted by employee.", new Date(), EntityType.User,managerId,false);
+
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO(
+                "New learning submitted by employee.",
+                new Date(),
+                EntityType.User,
+                List.of(managerId)
+
+        );
+
+
 
         kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
 
@@ -162,7 +175,12 @@ public class UserLearningsService {
 
         userLearningsMapper.toUserLearningsDTO(userLearning);
 
-        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("Learning status updated by manager.", new Date(), EntityType.Manager,userLearning.getUserId(),false);
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO(
+                "Learning status updated by manager.",
+                new Date(),
+                EntityType.Manager,
+                List.of(userLearning.getUserId())
+        );
 
         kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
     }
@@ -176,7 +194,11 @@ public class UserLearningsService {
 
         userLearningsMapper.toUserLearningsDTO(userLearning);
 
-        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("Learning comment updated by manager.", new Date(), EntityType.Manager,userLearning.getUserId(),false);
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO(
+                "Learning comment updated by manager.",
+                new Date(), EntityType.Manager,
+                List.of(userLearning.getUserId())
+                );
 
         kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
     }

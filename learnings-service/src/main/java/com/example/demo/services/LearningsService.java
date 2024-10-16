@@ -52,6 +52,7 @@ public class LearningsService {
         Learnings learning = learningsMapper.toLearnings(learningsDTO);
         Learnings savedLearning = learningsRepository.save(learning);
         learningsMapper.toLearningsDTO(savedLearning);
+        System.out.println("HEREEEEEE");
         userService.sendNotificationsToAll(learning.getTitle() + "learning has been added");
     }
 

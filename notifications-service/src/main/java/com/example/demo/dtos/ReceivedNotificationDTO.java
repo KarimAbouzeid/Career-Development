@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -19,9 +20,8 @@ public class ReceivedNotificationDTO {
 
     private EntityType entityType;
 
-    private UUID receiverId;
+    private List<UUID> receiversIds;
 
-    private boolean seen;
 
 }
 

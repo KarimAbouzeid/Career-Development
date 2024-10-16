@@ -1,9 +1,6 @@
 package com.example.demo.kafka;
 
-import com.example.demo.dtos.ActionsDTO;
-import com.example.demo.dtos.NotificationDataDTO;
-import com.example.demo.dtos.NotificationDTO;
-import com.example.demo.dtos.ReceivedNotificationDTO;
+import com.example.demo.dtos.*;
 import com.example.demo.services.ActionsService;
 import com.example.demo.services.NotificationDataService;
 import com.example.demo.services.NotificationsService;
@@ -12,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -32,7 +32,7 @@ public class KafkaConsumerService {
 
         ActionsDTO actionsDTO = new ActionsDTO();
         actionsDTO.setName(receivedNotificationDTO.getActionName());
-        ActionsDTO returnedActionsDto = actionsService.addAction(actionsDTO);
+        ActionsDTO returnedActionsDto = actionsService. addAction(actionsDTO);
 
         NotificationDataDTO notificationDataDTO = new NotificationDataDTO();
         notificationDataDTO.setDate(receivedNotificationDTO.getDate());
@@ -42,14 +42,20 @@ public class KafkaConsumerService {
         System.out.println("actionsDTO: " + returnedActionsDto);
         NotificationDataDTO returnedNotificationDataDTO = notificationDataService.addNotificationData(notificationDataDTO);
 
+        List<UUID> receiversIds = receivedNotificationDTO.getReceiversIds();
 
-        NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setNotification_data_id(returnedNotificationDataDTO.getId());
-        notificationDTO.setReceiverId(receivedNotificationDTO.getReceiverId());
-        notificationDTO.setSeen(receivedNotificationDTO.isSeen());
-        notificationsService.addNotification(notificationDTO);
+        for (UUID receiversId : receiversIds) {
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setNotification_data_id(returnedNotificationDataDTO.getId());
+            notificationDTO.setReceiverId(receiversId);
+            notificationsService.addNotification(notificationDTO);
+        }
 
     }
 
 
-}
+
+
+
+
+    }

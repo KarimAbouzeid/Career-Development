@@ -14,11 +14,9 @@ public class KafkaProducerService {
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendNotification(String topic, ReceivedNotificationDTO payload) {
+        log.info("Sent NotificationDTO: {}", payload);
 
-        System.out.println("PAYLOAD: " + payload);
-        System.out.println("TOPIC: " + topic);
         kafkaTemplate.send(topic, payload);
-        System.out.println("SENT");
     }
 
 

@@ -60,7 +60,12 @@ public class ArticleService {
 
         articleMapper.toArticleDTO(article);
 
-        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("Article status updated by manager.", new Date(), EntityType.Manager,article.getAuthor(),false);
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO(
+                "Article status updated by manager.",
+                new Date(),
+                EntityType.Manager,
+                List.of(article.getAuthor())
+                );
 
         kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
 
@@ -75,7 +80,11 @@ public class ArticleService {
 
         articleMapper.toArticleDTO(article);
 
-        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("Article comment updated by manager.", new Date(), EntityType.Manager,article.getAuthor(),false);
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO(
+                "Article comment updated by manager.",
+                new Date(),
+                EntityType.Manager,
+                List.of(article.getAuthor()));
 
         kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
 
@@ -90,7 +99,11 @@ public class ArticleService {
         Article savedArticle = articleRepository.save(article);
 
         UUID managerId = userService.getManager(article.getAuthor());
-        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("New article submitted by employee.", new Date(), EntityType.User,managerId,false);
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO(
+                "New article submitted by employee.",
+                new Date(),
+                EntityType.User,
+                List.of(managerId));
 
         kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
 

@@ -135,6 +135,7 @@ public class UsersController {
 
     @GetMapping("/allUsersIds")
     public ResponseEntity<List<UUID>> getAllUsersIds() {
+        System.out.println("All users here HERE");
         List<UUID> usersIds = usersServices.getAllUserIds();
         return ResponseEntity.ok(usersIds);
     }

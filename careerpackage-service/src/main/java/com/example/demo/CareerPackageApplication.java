@@ -16,10 +16,5 @@ public class CareerPackageApplication{
         SpringApplication.run(CareerPackageApplication.class, args);
     }
 
-    @   Bean
-    CommandLineRunner commandLineRunner(KafkaTemplate<String, String> kafkaTemplate){
-        return args -> {
-            kafkaTemplate.send("topic1", "Hello, Sara!");
-        };
-    }
+
 }

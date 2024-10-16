@@ -62,6 +62,7 @@ public class SecurityConfig  {
                     auth.requestMatchers("/api/auth/**").permitAll();
                     auth.requestMatchers("/api/users/signUp").permitAll();
                     auth.requestMatchers("/api/users/getManager/**").permitAll();
+                    auth.requestMatchers("/api/users/allUsersIds").permitAll();
                     auth.requestMatchers(AUTH_WHITELIST).permitAll();
                     auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     auth.anyRequest().authenticated();
