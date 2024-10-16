@@ -2,7 +2,7 @@ package com.example.demo.kafka;
 
 import com.example.demo.dtos.ActionsDTO;
 import com.example.demo.dtos.NotificationDataDTO;
-import com.example.demo.dtos.NotificationsDTO;
+import com.example.demo.dtos.NotificationDTO;
 import com.example.demo.dtos.ReceivedNotificationDTO;
 import com.example.demo.services.ActionsService;
 import com.example.demo.services.NotificationDataService;
@@ -32,16 +32,19 @@ public class KafkaConsumerService {
 
         ActionsDTO actionsDTO = new ActionsDTO();
         actionsDTO.setName(receivedNotificationDTO.getActionName());
-        actionsService.addAction(actionsDTO);
+        ActionsDTO returnedActionsDto = actionsService.addAction(actionsDTO);
 
         NotificationDataDTO notificationDataDTO = new NotificationDataDTO();
         notificationDataDTO.setDate(receivedNotificationDTO.getDate());
         notificationDataDTO.setEntityType(receivedNotificationDTO.getEntityType());
-        notificationDataDTO.setAction_id(actionsDTO.getId());
-        notificationDataService.addNotificationData(notificationDataDTO);
+        notificationDataDTO.setAction_id(returnedActionsDto.getId());
+        System.out.println("notificationDataDTO: " + notificationDataDTO);
+        System.out.println("actionsDTO: " + returnedActionsDto);
+        NotificationDataDTO returnedNotificationDataDTO = notificationDataService.addNotificationData(notificationDataDTO);
 
-        NotificationsDTO notificationDTO = new NotificationsDTO();
-        notificationDTO.setNotification_data_id(notificationDataDTO.getId());
+
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setNotification_data_id(returnedNotificationDataDTO.getId());
         notificationDTO.setReceiverId(receivedNotificationDTO.getReceiverId());
         notificationDTO.setSeen(receivedNotificationDTO.isSeen());
         notificationsService.addNotification(notificationDTO);

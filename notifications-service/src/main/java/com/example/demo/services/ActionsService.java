@@ -42,9 +42,10 @@ public class ActionsService {
         return actionsMapper.toActionsDTO(actions);
     }
 
-    public void addAction(ActionsDTO actionDTO) {
+    public ActionsDTO addAction(ActionsDTO actionDTO) {
         Actions action = actionsMapper.toActions(actionDTO);
-        actionsRepository.save(action);
+        Actions returnedAction = actionsRepository.save(action);
+        return actionsMapper.toActionsDTO(returnedAction);
     }
 
     public void deleteAction(UUID id) {

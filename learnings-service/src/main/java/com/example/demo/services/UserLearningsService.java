@@ -1,6 +1,6 @@
 package com.example.demo.services;
 
-import com.example.demo.dtos.NotificationDTO;
+import com.example.demo.dtos.ReceivedNotificationDTO;
 import com.example.demo.dtos.SubmitUserLearningDTO;
 import com.example.demo.dtos.UserLearningResponseDTO;
 import com.example.demo.dtos.UserLearningsDTO;
@@ -152,7 +152,7 @@ public class UserLearningsService {
 
         userLearningsMapper.toUserLearningsDTO(userLearning);
 
-        NotificationDTO notification = new NotificationDTO("Learning Status Update", new Date(), EntityType.Manager,userLearning.getUserId(),false);
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("Learning Status Update", new Date(), EntityType.Manager,userLearning.getUserId(),false);
 
         kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
     }

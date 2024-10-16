@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.dtos.NotificationsDTO;
+import com.example.demo.dtos.NotificationDTO;
 import com.example.demo.services.NotificationsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +21,11 @@ public class NotificationsController {
     }
 
     @GetMapping("/all/{userId}")
-    public ResponseEntity<List<NotificationsDTO>> getAllNotifications(
+    public ResponseEntity<List<NotificationDTO>> getAllNotifications(
             @PathVariable UUID userId
            ) {
 
-        List<NotificationsDTO> notifications = notificationsService.getAllNotifications(userId);
+        List<NotificationDTO> notifications = notificationsService.getAllNotifications(userId);
 
         return ResponseEntity.ok(notifications);
     }
@@ -37,14 +37,14 @@ public class NotificationsController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addNotification(@RequestBody NotificationsDTO notificationsDTO) {
+    public ResponseEntity<String> addNotification(@RequestBody NotificationDTO notificationsDTO) {
         notificationsService.addNotification(notificationsDTO);
         return ResponseEntity.ok("Notification added successfully");
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NotificationsDTO> getNotification(@PathVariable UUID id) {
-        NotificationsDTO notificationDTO = notificationsService.getNotification(id);
+    public ResponseEntity<NotificationDTO> getNotification(@PathVariable UUID id) {
+        NotificationDTO notificationDTO = notificationsService.getNotification(id);
         return new ResponseEntity<>(notificationDTO, HttpStatus.OK);
     }
 }

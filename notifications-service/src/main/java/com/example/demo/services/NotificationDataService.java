@@ -45,8 +45,9 @@ public class NotificationDataService {
         }
     }
 
-    public void addNotificationData(NotificationDataDTO NotificationDataDTO) {
+    public NotificationDataDTO addNotificationData(NotificationDataDTO NotificationDataDTO) {
         NotificationData NotificationData = notificationDataMapper.toNotificationData(NotificationDataDTO);
-        notificationsDataRepository.save(NotificationData);
+        NotificationData returnedNotificationData = notificationsDataRepository.save(NotificationData);
+        return notificationDataMapper.toNotificationDataDTO(returnedNotificationData);
     }
 }

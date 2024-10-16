@@ -1,6 +1,6 @@
 package com.example.demo.mappers;
 
-import com.example.demo.dtos.NotificationsDTO;
+import com.example.demo.dtos.NotificationDTO;
 import com.example.demo.entities.Notifications;
 import org.mapstruct.*;
 
@@ -8,11 +8,11 @@ import org.mapstruct.*;
 public interface NotificationMapper {
 
     @Mapping(source = "notificationData.id", target = "notification_data_id")
-    NotificationsDTO toNotificationsDTO(Notifications notifications);
+    NotificationDTO toNotificationsDTO(Notifications notifications);
 
     @Mapping(source = "notification_data_id", target = "notificationData.id")
-    Notifications toNotifications(NotificationsDTO notificationsDTO);
+    Notifications toNotifications(NotificationDTO notificationsDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateNotificationsFromDTO(NotificationsDTO notificationsDTO, @MappingTarget Notifications notifications);
+    void updateNotificationsFromDTO(NotificationDTO notificationsDTO, @MappingTarget Notifications notifications);
 }

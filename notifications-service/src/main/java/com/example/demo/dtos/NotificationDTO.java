@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class NotificationsDTO {
+public class NotificationDTO {
 
     private UUID id;
 

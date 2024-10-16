@@ -1,7 +1,6 @@
 package com.example.demo.dtos;
 
 import com.example.demo.enums.EntityType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class NotificationDTO {
+public class ReceivedNotificationDTO {
 
     private String actionName;
 

@@ -1,17 +1,13 @@
 package com.example.demo.services;
 
-import com.example.demo.dtos.NotificationsDTO;
+import com.example.demo.dtos.NotificationDTO;
 import com.example.demo.entities.Notifications;
 import com.example.demo.mappers.NotificationMapper;
 import com.example.demo.repositories.NotificationsRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,7 +21,7 @@ public class NotificationsService {
         this.notificationMapper = notificationMapper;
     }
 
-    public List<NotificationsDTO> getAllNotifications(UUID userId) {
+    public List<NotificationDTO> getAllNotifications(UUID userId) {
         List<Notifications> allNotifications = notificationsRepository.findAll();
         return allNotifications.stream()
                 .map(notificationMapper::toNotificationsDTO)
@@ -33,7 +29,7 @@ public class NotificationsService {
     }
 
 
-    public NotificationsDTO getNotification(UUID notificationId) {
+    public NotificationDTO getNotification(UUID notificationId) {
         Notifications notifications = notificationsRepository.findById(notificationId)
                 .orElseThrow(() -> new EntityNotFoundException("Notification with id " + notificationId + " not found"));
 
@@ -48,7 +44,7 @@ public class NotificationsService {
         }
     }
 
-    public void addNotification(NotificationsDTO notificationsDTO) {
+    public void addNotification(NotificationDTO notificationsDTO) {
         Notifications notifications = notificationMapper.toNotifications(notificationsDTO);
         notificationsRepository.save(notifications);
     }
