@@ -5,6 +5,7 @@ import com.example.demo.dtos.RequestSubmitCPDto;
 import com.example.demo.dtos.RequestSubmitCPwithID;
 import com.example.demo.dtos.SubmittedCPDto;
 import com.example.demo.entities.SubmittedCP;
+import com.example.demo.enums.Status;
 import com.example.demo.service.SubmittedCPService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,11 +34,15 @@ public class SubmittedCPController {
         return ResponseEntity.ok(createdSubmittedCP);
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<SubmittedCPDto> updateSubmittedCP(SubmittedCPDto submittedCPDto) {
+    @PutMapping("/update")
+    public ResponseEntity<SubmittedCPDto> updateSubmittedCP(@RequestBody SubmittedCPDto submittedCPDto) {
+        System.out.println(submittedCPDto);
         SubmittedCPDto updatedSubmittedCP = submittedCPService.updateSubmittedCP(submittedCPDto);
         return ResponseEntity.ok(updatedSubmittedCP);
     }
+
+
+
 
     @PostMapping("/delete")
     public ResponseEntity<String> deleteSubmittedCP(SubmittedCPDto submittedCPDto) {

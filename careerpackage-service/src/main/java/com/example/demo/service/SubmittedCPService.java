@@ -73,12 +73,15 @@ public class SubmittedCPService {
     }
 
     public SubmittedCPDto updateSubmittedCP(SubmittedCPDto submittedCPDto) {
+        System.out.println(submittedCPDto);
         SubmittedCP submittedCP = submittedCPRepository.findById(submittedCPDto.getSubmissionId()).orElseThrow(() -> new EntityNotFoundException("Submitted CP with id " + submittedCPDto.getSubmissionId() + " not found"));
 
         submittedCPMapper.updateSubmittedCareerPackageFromDto(submittedCPDto, submittedCP);
         submittedCP = submittedCPRepository.save(submittedCP);
         return submittedCPMapper.toSubmittedCPDto(submittedCP);
     }
+
+
 
 
     public SubmittedCPDto getSubmittedCP(UUID id) {
