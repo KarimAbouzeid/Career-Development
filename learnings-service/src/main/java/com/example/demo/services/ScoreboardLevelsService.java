@@ -18,12 +18,14 @@ public class ScoreboardLevelsService {
 
     private final ScoreboardLevelsRepository scoreboardLevelsRepository;
     private final ScoreboardLevelsMapper scoreboardLevelsMapper;
+    private final UserService userService;
 
 
     @Autowired
-    public ScoreboardLevelsService(ScoreboardLevelsRepository scoreboardLevelsRepository, ScoreboardLevelsMapper scoreboardLevelsMapper) {
+    public ScoreboardLevelsService(ScoreboardLevelsRepository scoreboardLevelsRepository, ScoreboardLevelsMapper scoreboardLevelsMapper, UserService userService) {
         this.scoreboardLevelsMapper = scoreboardLevelsMapper;
         this.scoreboardLevelsRepository = scoreboardLevelsRepository;
+        this.userService = userService;
     }
 
     public ScoreboardLevelsDTO getScoreboardLevel(UUID id) {
@@ -38,6 +40,8 @@ public class ScoreboardLevelsService {
     public ScoreboardLevelsDTO addScoreboardLevel(ScoreboardLevelsDTO scoreboardLevelsDTO) {
         ScoreboardLevels scoreboardLevel = scoreboardLevelsMapper.toScoreboardLevels(scoreboardLevelsDTO);
         scoreboardLevelsRepository.save(scoreboardLevel);
+        userService.sendNotificationsToAll(scoreboardLevel.getLevelName() + "scoreboard level has been added!");
+
         return scoreboardLevelsMapper.toScoreboardLevelsDTO(scoreboardLevel);
     }
 
@@ -49,16 +53,19 @@ public class ScoreboardLevelsService {
         scoreboardLevelsMapper.updateScoreboardLevelsFromDTO(scoreboardLevelsUpdateDTO,scoreboardLevel);
 
         scoreboardLevelsRepository.save(scoreboardLevel);
+
+        userService.sendNotificationsToAll(scoreboardLevel.getLevelName() + "scoreboard level has been updated!");
+
         return scoreboardLevelsMapper.toScoreboardLevelsDTO(scoreboardLevel);
     }
 
     public void deletescoreboardLevel(UUID id) {
-        if (scoreboardLevelsRepository.existsById(id)) {
-            scoreboardLevelsRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("ScoreboardLevel with id " + id + " does not exist.");
+        ScoreboardLevels scoreboardLevel = scoreboardLevelsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ScoreboardLevel not found with ID: " + id));
 
-        }
+            scoreboardLevelsRepository.deleteById(scoreboardLevel.getId());
+            userService.sendNotificationsToAll(scoreboardLevel.getLevelName() + "scoreboard level has been deleted!");
+
     }
 
 

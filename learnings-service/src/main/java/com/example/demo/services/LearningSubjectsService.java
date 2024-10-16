@@ -21,11 +21,15 @@ public class LearningSubjectsService {
 
     private final LearningSubjectsMapper learningSubjectsMapper;
 
+    private final UserService userService;
+
+
     @Autowired
-    public LearningSubjectsService(LearningSubjectsRepository learningSubjectsRepository, LearningsRepository learningsRepository, LearningSubjectsMapper learningSubjectsMapper) {
+    public LearningSubjectsService(LearningSubjectsRepository learningSubjectsRepository, LearningsRepository learningsRepository, LearningSubjectsMapper learningSubjectsMapper, UserService userService) {
         this.learningSubjectsRepository = learningSubjectsRepository;
         this.learningsRepository = learningsRepository;
         this.learningSubjectsMapper = learningSubjectsMapper;
+        this.userService = userService;
     }
 
     public LearningSubjectsDTO getLearningSubjectById(UUID id) {
@@ -46,13 +50,15 @@ public class LearningSubjectsService {
     public LearningSubjectsDTO addLearningSubject(LearningSubjectsDTO learningSubjectsDTO) {
         LearningSubjects learningSubjects = learningSubjectsMapper.toLearningSubjects(learningSubjectsDTO);
         learningSubjectsRepository.save(learningSubjects);
+        userService.sendNotificationsToAll(learningSubjects.getSubject() + "learning subject has been added!");
+
         return learningSubjectsMapper.toLearningSubjectsDTO(learningSubjects);
     }
 
     public LearningSubjectsDTO updateLearningSubject(UUID id, LearningSubjectsDTO learningSubjectsUpdateDTO) {
 
         LearningSubjects scoreboardLevel = learningSubjectsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ScoreboardLevel not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Learning subject not found with ID: " + id));
 
         learningSubjectsMapper.updateLearningSubjectsFromDTO(learningSubjectsUpdateDTO,scoreboardLevel);
 
@@ -65,7 +71,7 @@ public class LearningSubjectsService {
             learningsRepository.deleteByLearningSubjectId(id);
             learningSubjectsRepository.deleteById(id);
         } else {
-            throw new EntityNotFoundException("ScoreboardLevel with id " + id + " does not exist.");
+            throw new EntityNotFoundException("Learning subject with id " + id + " does not exist.");
         }
     }
 }

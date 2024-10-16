@@ -34,11 +34,14 @@ public class UserLearningsService {
 
     private final KafkaProducerService kafkaProducerService;
 
+    private final UserService userService;
+
+
     @Value("notification")
     private String approvalNotificationTopic;
 
     @Autowired
-    public UserLearningsService(UserLearningsRepository userLearningsRepository, LearningsRepository learningsRepository, LearningTypesRepository learningTypesRepository, LearningSubjectsRepository learningSubjectsRepository, ProofTypesRepository proofTypesRepository, BoostersRepository boostersRepository, UserLearningsMapper userLearningsMapper, KafkaProducerService kafkaProducerService) {
+    public UserLearningsService(UserLearningsRepository userLearningsRepository, LearningsRepository learningsRepository, LearningTypesRepository learningTypesRepository, LearningSubjectsRepository learningSubjectsRepository, ProofTypesRepository proofTypesRepository, BoostersRepository boostersRepository, UserLearningsMapper userLearningsMapper, KafkaProducerService kafkaProducerService, UserService userService) {
         this.userLearningsRepository = userLearningsRepository;
         this.learningsRepository = learningsRepository;
         this.learningTypesRepository = learningTypesRepository;
@@ -47,6 +50,7 @@ public class UserLearningsService {
         this.boostersRepository = boostersRepository;
         this.userLearningsMapper = userLearningsMapper;
         this.kafkaProducerService = kafkaProducerService;
+        this.userService = userService;
     }
 
     public void submitUserLearning(SubmitUserLearningDTO dto) {
@@ -85,6 +89,12 @@ public class UserLearningsService {
 
         // Return the mapped DTO
         userLearningsMapper.toUserLearningsDTO(userLearning);
+
+        UUID managerId = userService.getManager(dto.getUserId());
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("New learning submitted by employee.", new Date(), EntityType.User,managerId,false);
+
+        kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
+
     }
 
     // Helper methods to find related entities
@@ -152,7 +162,7 @@ public class UserLearningsService {
 
         userLearningsMapper.toUserLearningsDTO(userLearning);
 
-        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("Learning Status Update", new Date(), EntityType.Manager,userLearning.getUserId(),false);
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("Learning status updated by manager.", new Date(), EntityType.Manager,userLearning.getUserId(),false);
 
         kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
     }
@@ -165,5 +175,9 @@ public class UserLearningsService {
         userLearningsRepository.save(userLearning);
 
         userLearningsMapper.toUserLearningsDTO(userLearning);
+
+        ReceivedNotificationDTO notification = new ReceivedNotificationDTO("Learning comment updated by manager.", new Date(), EntityType.Manager,userLearning.getUserId(),false);
+
+        kafkaProducerService.sendNotification(approvalNotificationTopic,notification);
     }
 }

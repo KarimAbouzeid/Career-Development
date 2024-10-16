@@ -23,4 +23,7 @@ public interface UsersRepository extends JpaRepository<Users, UUID> {
 
     @Query("SELECT u FROM Users u WHERE u.manager.id = :managerId")
     List<Users> findByManagerId(@Param("managerId") UUID managerId);
+
+    @Query("SELECT u.id FROM Users u")
+    List<UUID> findAllUserIds();
 }

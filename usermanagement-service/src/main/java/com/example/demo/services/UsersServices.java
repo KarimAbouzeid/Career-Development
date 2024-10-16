@@ -194,6 +194,17 @@ public class UsersServices {
 
     }
 
+    public List<UUID> getAllUserIds() {
+        List<UUID> userIds = usersRepository.findAllUserIds();
+
+        if (userIds.isEmpty()) {
+            throw new EntityNotFoundException("No users found");
+        }
+
+        return userIds;
+    }
+
+
     public Map<String, Object> getManagerAndTitle(UsersDTO usersDTO) {
         Map<String, Object> result = new HashMap<>();
 

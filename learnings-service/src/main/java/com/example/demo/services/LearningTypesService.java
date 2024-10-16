@@ -25,16 +25,19 @@ public class LearningTypesService {
 
     private final LearningTypesMapper learningTypesMapper; // Mapper for conversion
 
+    private final UserService userService;
+
     @Autowired
-    public LearningTypesService(LearningTypesRepository learningTypesRepository, LearningsRepository learningsRepository, LearningTypesMapper learningTypesMapper) {
+    public LearningTypesService(LearningTypesRepository learningTypesRepository, LearningsRepository learningsRepository, LearningTypesMapper learningTypesMapper, UserService userService) {
         this.learningTypesRepository = learningTypesRepository;
         this.learningsRepository = learningsRepository;
         this.learningTypesMapper = learningTypesMapper;
+        this.userService = userService;
     }
 
     public LearningTypesDTO getLearningTypeById(UUID id) {
         LearningTypes learningType = learningTypesRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("LearningType not found with id " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Learning type not found with id " + id));
         return learningTypesMapper.toLearningTypesDTO(learningType); // Convert to DTO
     }
 
@@ -50,13 +53,15 @@ public class LearningTypesService {
     public LearningTypesDTO addLearningType(LearningTypesDTO learningTypesDTO) {
         LearningTypes learningTypes = learningTypesMapper.toLearningTypes(learningTypesDTO);
         learningTypesRepository.save(learningTypes);
+        userService.sendNotificationsToAll(learningTypes.getTypeName() + "learning type has been added!");
+
         return learningTypesMapper.toLearningTypesDTO(learningTypes);
     }
 
     public LearningTypesDTO updateLearningType(UUID id, LearningTypesDTO LearningTypesUpdateDTO) {
 
         LearningTypes scoreboardLevel = learningTypesRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ScoreboardLevel not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Learning type not found with ID: " + id));
 
         learningTypesMapper.updateLearningTypesFromDTO(LearningTypesUpdateDTO,scoreboardLevel);
 
@@ -69,7 +74,7 @@ public class LearningTypesService {
             learningsRepository.deleteBylearningTypeId(id);
             learningTypesRepository.deleteById(id);
         } else {
-            throw new EntityNotFoundException("ScoreboardLevel with id " + id + " does not exist.");
+            throw new EntityNotFoundException("Learning type with id " + id + " does not exist.");
         }
     }
 

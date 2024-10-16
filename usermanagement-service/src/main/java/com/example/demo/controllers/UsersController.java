@@ -37,7 +37,6 @@ public class UsersController {
 
     @GetMapping("/getManager/{id}")
     public ResponseEntity<UUID> getManager(@PathVariable UUID id) {
-        System.out.println("WASAL");
         UUID managerUuid = usersServices.getManager(id);
         return ResponseEntity.ok(managerUuid);
     }
@@ -64,6 +63,7 @@ public class UsersController {
         Page<UsersDTO> usersDTOS = usersServices.getAllUsers(pageable);
         return ResponseEntity.ok(usersDTOS);
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<UsersDTO> login( @RequestParam String email, @RequestParam String password) {
@@ -133,5 +133,10 @@ public class UsersController {
         return new ResponseEntity<>(managedUsers, HttpStatus.OK);
     }
 
+    @GetMapping("/allUsersIds")
+    public ResponseEntity<List<UUID>> getAllUsersIds() {
+        List<UUID> usersIds = usersServices.getAllUserIds();
+        return ResponseEntity.ok(usersIds);
+    }
 
 }

@@ -22,12 +22,16 @@ public class LearningsService {
 
     private final LearningsMapper learningsMapper;
 
+    private final UserService userService;
+
+
     @Autowired
-    public LearningsService(LearningsMapper learningsMapper, LearningsRepository learningsRepository, UserLearningsRepository userLearningsRepository) {
+    public LearningsService(LearningsMapper learningsMapper, LearningsRepository learningsRepository, UserLearningsRepository userLearningsRepository, UserService userService) {
         this.learningsMapper = learningsMapper;
         this.learningsRepository = learningsRepository;
 
         this.userLearningsRepository = userLearningsRepository;
+        this.userService = userService;
     }
 
     public List<LearningsDTO> getAllLearnings() {
@@ -48,6 +52,7 @@ public class LearningsService {
         Learnings learning = learningsMapper.toLearnings(learningsDTO);
         Learnings savedLearning = learningsRepository.save(learning);
         learningsMapper.toLearningsDTO(savedLearning);
+        userService.sendNotificationsToAll(learning.getTitle() + "learning has been added");
     }
 
     //for admin
@@ -61,18 +66,26 @@ public class LearningsService {
 
         learningsRepository.save(learning);
         learningsMapper.toLearningsDTO(learning);
+        userService.sendNotificationsToAll(learning.getTitle() + "learning has been updated!");
+
     }
 
     //for admin
     @Transactional
     public void deleteLearning(UUID id) {
         if (learningsRepository.existsById(id)) {
+            Learnings learning = learningsRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Learning not found with ID: " + id));
             userLearningsRepository.deleteByLearning_Id(id);
             learningsRepository.deleteById(id);
+            userService.sendNotificationsToAll(learning.getTitle() + "learning has been deleted!");
+
         } else {
             throw new EntityNotFoundException("Learning with id " + id  + " does not exist.");
 
         }
     }
+
+
 
 }
