@@ -85,12 +85,16 @@ public class ScoreboardLevelsService {
     public String getLevelByScore(int score) {
         List<ScoreboardLevels> levels = scoreboardLevelsRepository.findAll();
 
+        levels.sort((a, b) -> Integer.compare(b.getMinScore(), a.getMinScore()));
+
         for (ScoreboardLevels level : levels) {
-            if (score <= level.getMinScore()) {
+            if (score >= level.getMinScore()) {
                 return level.getLevelName();
             }
         }
+
         return "Guru";
     }
+
 
 }
